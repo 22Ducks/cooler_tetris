@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import styled from 'styled-components'
+import { GameCanvas } from './GameCanvas'
 
 const ContainerDiv = styled.div `
 display: flex;
@@ -10,44 +11,94 @@ justify-content: flex-start;
 `
 
 const UiDiv = styled.div `
-width: 30vw;
+width: 35vw;
 border: 1px solid #000000;
 `
 
 const GameDiv = styled.div `
 display: flex;
 flex-direction: row;
-width: 60vw;
+width: 50vw;
 border: 1px solid #000000;
 `
 
 const InfoDiv = styled.div `
-width: 20vw;
+display: flex;
+flex-direction: column;
+width: 40%;
 height: 80vh;
 align-self: flex-start;
 border: 1px solid #000000;
 margin-top: 5vh;
+overflow: auto;
 `
 
-const GameCanvas = styled.canvas `
-width: 30vw;
-height: 80vh;
-align-self: flex-start;
+const UpNextDiv = styled.div `
+display: flex;
+height: 30%;
+border-bottom: 1px solid #000000;
+`
+
+const UpNextDisplay = styled.div `
+height: 80%;
+aspect-ratio: 1 / 1;
+margin-top: 5%;
+margin-left: 5%;
 border: 1px solid #000000;
-margin-left: 5vw;
-margin-top: 5vh;
 `
 
-type GridProps = {
-  c: HTMLCanvasElement;
-  layout: boolean[][];
-  width: number;
-  height: number;
-}
+const ChallengeDiv = styled.div `
+height: 40%;
+border-bottom: 1px solid #000000;
+`
+
+const TimerDiv = styled.div `
+height: 30%;
+`
 
 function App() {
 
-  const [gridArr, setGridArr] = useState<boolean[][]>(new Array(20).fill([new Array(10).fill(false)]));
+  const [gridArr, setGridArr] = useState<boolean[][]>(new Array(20).fill(new Array(10).fill(false)));
+  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const gameDimensions = [window.innerHeight*0.4, window.innerHeight*0.8];
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      if(ctx) {
+        gridArr.forEach((row, yInd) => {
+          row.forEach((item, xInd) => {
+            if(item) {
+              ctx.fillStyle = "#7cce70ff"
+            } else {
+              ctx.fillStyle = "#222222ff"
+            }
+            ctx.fillRect(xInd*(gameDimensions[0]/10), yInd*(gameDimensions[1]/20), gameDimensions[0]/10, gameDimensions[1]/10);
+            ctx.rect(xInd*(gameDimensions[0]/10), yInd*(gameDimensions[1]/20), gameDimensions[0]/10, gameDimensions[1]/10);
+          });
+        });
+        ctx.strokeStyle = "#aaaaaaff";
+        ctx.stroke();
+      }
+    }
+  }, [gridArr, windowHeight]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowHeight(window.innerHeight);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
     <ContainerDiv>
@@ -55,16 +106,22 @@ function App() {
         <p>div1</p>
       </UiDiv>
       <GameDiv>
-        <GameCanvas id="gameCanvas" />
-        <script>
-          var c = document.getElementById("myCanvas");
-          var ctx = c.getContext("2d");
-          ctx.rect(0,0,10,10);
-          ctx.stroke();
-        </script>
-
+        <GameCanvas canvasRef={canvasRef} width={gameDimensions[0]} height={gameDimensions[1]}/>
         <InfoDiv>
-
+          <UpNextDiv>
+            <UpNextDisplay>
+              
+            </UpNextDisplay>
+            <div>
+              <p>fancy up next text here</p>
+            </div>
+          </UpNextDiv>
+          <ChallengeDiv>
+            <p>two</p>
+          </ChallengeDiv>
+          <TimerDiv>
+            <p>three</p>
+          </TimerDiv>
         </InfoDiv>
       </GameDiv>
     </ContainerDiv>
