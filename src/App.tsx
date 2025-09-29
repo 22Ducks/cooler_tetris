@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import styled from 'styled-components'
 import { GameCanvas } from './GameCanvas'
+import { block } from './block'
+import { blockControl } from './blockControl'
 
 const ContainerDiv = styled.div `
 display: flex;
@@ -58,13 +60,29 @@ height: 30%;
 
 function App() {
 
-  const [gridArr, setGridArr] = useState<boolean[][]>(new Array(20).fill(new Array(10).fill(false)));
+  const [gridArr, setGridArr] = useState<string[][]>(new Array(20).fill("").map(() => new Array(10).fill("")));
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const shape = useRef("I");
+  const rotation = useRef(1);
+  const centerPoint = useRef([5, 5]);
+
   const gameDimensions = [window.innerHeight*0.4, window.innerHeight*0.8];
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      blockControl(event.key, gridArr, setGridArr, shape.current, rotation.current, centerPoint.current);
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+  
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
@@ -72,10 +90,12 @@ function App() {
       if(ctx) {
         gridArr.forEach((row, yInd) => {
           row.forEach((item, xInd) => {
-            if(item) {
+            if(item === "[x]") {
               ctx.fillStyle = "#7cce70ff"
-            } else {
+            } else if(item === "") {
               ctx.fillStyle = "#222222ff"
+            } else {
+              ctx.fillStyle = "#47cc33ff"
             }
             ctx.fillRect(xInd*(gameDimensions[0]/10), yInd*(gameDimensions[1]/20), gameDimensions[0]/10, gameDimensions[1]/10);
             ctx.rect(xInd*(gameDimensions[0]/10), yInd*(gameDimensions[1]/20), gameDimensions[0]/10, gameDimensions[1]/10);
