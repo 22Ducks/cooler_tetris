@@ -73,7 +73,8 @@ function App() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      blockControl(event.key, gridArr, setGridArr, shape.current, rotation.current, centerPoint.current);
+      console.log( event.key );
+      blockControl(event.key, gridArr, setGridArr, shape, rotation, centerPoint.current);
     };
 
     document.addEventListener('keydown', handleKeyDown);

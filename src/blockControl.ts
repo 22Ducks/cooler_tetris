@@ -1,7 +1,7 @@
 import { block } from "./block";
 
-export const blockControl = (event: string | null, gridArr: string[][], setGridArr: React.Dispatch<React.SetStateAction<string[][]>>,
-                            shape: string, rotation: number, centerPoint: number[]) => {
+export const blockControl = (event: string, gridArr: string[][], setGridArr: React.Dispatch<React.SetStateAction<string[][]>>,
+                            shape: React.RefObject<string>, rotation: React.RefObject<number>, centerPoint: number[]) => {
 
   //event can either be key press or moving down on timer
 
@@ -17,6 +17,14 @@ export const blockControl = (event: string | null, gridArr: string[][], setGridA
         [["", "", "", ""],
           ["o", "o", "o", "o"],
           ["", "", "", ""],
+          ["", "", "", ""]],
+        [["", "", "o", ""],
+          ["", "", "o", ""],
+          ["", "", "o", ""],
+          ["", "", "o", ""]],
+        [["", "", "", ""],
+          ["", "", "", ""],
+          ["o", "o", "o", "o"],
           ["", "", "", ""]]],
 
     S: [[["", "o", "o"],
@@ -84,8 +92,15 @@ export const blockControl = (event: string | null, gridArr: string[][], setGridA
           ["o", "o", ""],
           ["", "o", ""]]],
   };
+
+  //rotation updates
+  if(event.toLowerCase() === "z") {
+    rotation.current = (rotation.current - 1) >= 0 ? (rotation.current - 1) : shapeChart[shape.current as keyof typeof shapeChart].length - 1;
+  } else if(event.toLowerCase() === "x") {
+    rotation.current = (rotation.current + 1)%(shapeChart[shape.current as keyof typeof shapeChart].length);
+  }
   
-  const currentShape = shapeChart[shape as keyof typeof shapeChart][rotation];
+  const currentShape = shapeChart[shape.current as keyof typeof shapeChart][rotation.current];
 
   const shapeCenter = Math.floor(currentShape[0].length/2);
   const shapeEdges = [3, 0]; //default to both extremes
@@ -104,6 +119,19 @@ export const blockControl = (event: string | null, gridArr: string[][], setGridA
     centerPoint[0]++;
   }else if(event === "ArrowLeft" && centerPoint[0] + offsets[0] > 0) {
     centerPoint[0]--;
+  }else if(event === "ArrowDown") {
+    //deal with later
+  }else if(event.toLowerCase() === "z" || event.toLowerCase() === "x") { //prevent out-of-bounds
+    //out-of-bounds left check
+    while(centerPoint[0] + offsets[0] < 0) {
+      centerPoint[0]++;
+    }
+    //out-of-bounds right check
+    while(centerPoint[0] + offsets[1] > 10) {
+      centerPoint[0]--;
+    }
+
+    //overlap with already set blocks, use SRS method
   }
 
   block(centerPoint, currentShape, gridArr, setGridArr);
