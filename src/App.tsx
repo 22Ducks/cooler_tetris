@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import styled from 'styled-components'
 import { GameCanvas } from './GameCanvas'
-import { block } from './block'
 import { blockControl } from './blockControl'
 
 const ContainerDiv = styled.div `
@@ -71,7 +70,9 @@ function App() {
 
   const gameDimensions = [window.innerHeight*0.4, window.innerHeight*0.8];
 
-  useEffect(() => {
+  useEffect(() => { //on first render only
+    blockControl("Init", gridArr, setGridArr, shape, rotation, centerPoint.current);
+    
     const handleKeyDown = (event: KeyboardEvent) => {
       console.log( event.key );
       blockControl(event.key, gridArr, setGridArr, shape, rotation, centerPoint.current);
