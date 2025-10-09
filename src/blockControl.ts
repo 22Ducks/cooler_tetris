@@ -183,6 +183,7 @@ export const blockControl = (event: string, gridArr: string[][], setGridArr: Rea
   }
   
   let currentShape = shapeChart[shape.current as keyof typeof shapeChart][rotation.current];
+  const newGrid = structuredClone(gridArr);
 
   const shapeCenter = Math.floor(currentShape[0].length/2);
   const shapeEdges = [3, 0]; //default to both extremes
@@ -203,6 +204,56 @@ export const blockControl = (event: string, gridArr: string[][], setGridArr: Rea
     centerPoint[0]--;
   }else if(event === "ArrowDown") {
     //deal with later
+  }else if(event === " ") {
+    console.log("spacebar");
+    const bottom_blocks = new Array(currentShape[0].length).fill(-1);
+    const offsetTop = currentShape.length%2 === 0 ? -2 : -1;
+    const offsetLeft = currentShape[0].length%2 === 0 ? -2 : -1;
+
+    for(let y=currentShape.length-1; y>=0; y--) { //find lowest point in each x pos
+      for(let x=0; x<bottom_blocks.length; x++) {
+        if(currentShape[y][x] === "o") {
+          bottom_blocks[x] = y;
+        }
+      }
+      if(bottom_blocks.every(item => item > -1)) {
+        break;
+      }
+    }
+
+    let downShift = 0;
+    let falling = true;
+
+    while(falling) {
+      //console.log(Math.max(...bottom_blocks));
+      if(centerPoint[1] + Math.max(...bottom_blocks) + offsetTop + downShift === 19) { //failing to enter this statement...
+        //console.log("bottom of board");
+        falling = false;
+      }else{
+        bottom_blocks.forEach((yIndex, xIndex) => {
+          if(yIndex > -1){
+            //console.log(centerPoint[1] + offsetTop + yIndex + downShift + 1);
+            if(gridArr[centerPoint[1] + offsetTop + yIndex + downShift + 1][centerPoint[0] + offsetLeft + xIndex] === "[x]") {
+              falling = false;
+            }
+          }
+        });
+        if(falling) {
+          downShift++;
+        }
+      }
+    }
+ 
+    currentShape.forEach((row, yIndex) => {
+      row.forEach((item, xIndex) => {
+        const y = centerPoint[1] + yIndex + offsetTop + downShift;
+        const x = centerPoint[0] + xIndex + offsetLeft;
+        if(x >= 0 && y >= 0 && currentShape[yIndex][xIndex] !== "") {
+          newGrid[y][x] = "[x]";
+        }
+      });
+    });
+
   }else if(event.toLowerCase() === "z" || event.toLowerCase() === "x") { //prevent out-of-bounds
     let rotationObject;
 
@@ -223,5 +274,5 @@ export const blockControl = (event: string, gridArr: string[][], setGridArr: Rea
     }
   }
 
-  block(centerPoint, currentShape, gridArr, setGridArr);
+  block(centerPoint, currentShape, newGrid, setGridArr);
 }

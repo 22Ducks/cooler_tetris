@@ -7,11 +7,11 @@ export const block = (centerPoint: number[], currentShape: string[][], gridArr: 
     //checking for out of bounds or if landed will be handled by a diff function  
     
     //rewrite gridArr
-    const newGrid = structuredClone(gridArr);
+    const newGrid = new Array(20).fill("").map(() => new Array(10).fill(""));
 
-    newGrid.forEach((row) => {
-      row.map((item) => {
-        item = item === "[o]" ? "" : item;
+    gridArr.forEach((row, yIndex) => {
+      row.forEach((item, xIndex) => {
+        newGrid[yIndex][xIndex] = item === "[o]" ? "" : item;
       });
     });
  
@@ -25,5 +25,6 @@ export const block = (centerPoint: number[], currentShape: string[][], gridArr: 
       });
     });
 
+    console.log({newGrid});
     setGridArr(newGrid);
 }

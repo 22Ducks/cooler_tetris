@@ -72,21 +72,20 @@ function App() {
 
   useEffect(() => { //on first render only
     blockControl("Init", gridArr, setGridArr, shape, rotation, centerPoint.current);
+  }, []);
+  
+  useEffect(() => {
+    console.log({gridArr});
+    const canvas = canvasRef.current;
     
     const handleKeyDown = (event: KeyboardEvent) => {
       console.log( event.key );
+      //console.log("HANDLEKEYDOWN: ", gridArr);
       blockControl(event.key, gridArr, setGridArr, shape, rotation, centerPoint.current);
     };
 
     document.addEventListener('keydown', handleKeyDown);
 
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
-  
-  useEffect(() => {
-    const canvas = canvasRef.current;
     if (canvas) {
       const ctx = canvas.getContext('2d');
       if(ctx) {
@@ -107,6 +106,10 @@ function App() {
         ctx.stroke();
       }
     }
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, [gridArr, windowHeight]);
 
   useEffect(() => {
