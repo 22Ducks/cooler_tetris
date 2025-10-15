@@ -1,179 +1,13 @@
-import { block } from "./block";
+import { block } from "./updateActiveBlock";
 import { rotationCheck } from "./rotationCheck";
+import { outerOffsets } from "./outerOffsets";
+import { shapeChart, srs_chart } from "./constants";
+import { innerOffsets } from "./innerOffsets";
 
-export const blockControl = (event: string, gridArr: string[][], setGridArr: React.Dispatch<React.SetStateAction<string[][]>>,
+export const blockControl = (event: string, gridArr: string[][], setGridArr: ((gridArr: string[][]) => void),
                             shape: React.RefObject<string>, rotation: React.RefObject<number>, centerPoint: number[]) => {
 
   //event can either be key press or moving down on timer
-
-  const shapeChart = {
-    O: [[["", "o", "o", ""],
-          ["", "o", "o", ""],
-          ["", "", "", ""]]],
-        
-    I: [[["", "o", "", ""],
-          ["", "o", "", ""],
-          ["", "o", "", ""],
-          ["", "o", "", ""]],
-        [["", "", "", ""],
-          ["o", "o", "o", "o"],
-          ["", "", "", ""],
-          ["", "", "", ""]],
-        [["", "", "o", ""],
-          ["", "", "o", ""],
-          ["", "", "o", ""],
-          ["", "", "o", ""]],
-        [["", "", "", ""],
-          ["", "", "", ""],
-          ["o", "o", "o", "o"],
-          ["", "", "", ""]]],
-
-    S: [[["", "o", "o"],
-          ["o", "o", ""],
-          ["", "", ""]],
-        [["", "o", ""],
-          ["", "o", "o"],
-          ["", "", "o"]],
-        [["", "", ""],
-          ["", "o", "o"],
-          ["o", "o", ""]],
-        [["o", "", ""],
-          ["o", "o", ""],
-          ["", "o", ""]]],
-
-    Z: [[["o", "o", ""],
-          ["", "o", "o"],
-          ["", "", ""]],
-        [["", "", "o"],
-          ["", "o", "o"],
-          ["", "o", ""]],
-        [["", "", ""],
-          ["o", "o", ""],
-          ["", "o", "o"]],
-        [["", "o", ""],
-          ["o", "o", ""],
-          ["o", "", ""]]],
-
-    L: [[["", "", "o"],
-          ["o", "o", "o"],
-          ["", "", ""]],
-        [["", "o", ""],
-          ["", "o", ""],
-          ["", "o", "o"]],
-        [["", "", ""],
-          ["o", "o", "o"],
-          ["o", "", ""]],
-        [["o", "o", ""],
-          ["", "o", ""],
-          ["", "o", ""]]],
-
-    J: [[["o", "", ""],
-          ["o", "o", "o"],
-          ["", "", ""]],
-        [["", "o", "o"],
-          ["", "o", ""],
-          ["", "o", ""]],
-        [["", "", ""],
-          ["o", "o", "o"],
-          ["", "", "o"]],
-        [["", "o", ""],
-          ["", "o", ""],
-          ["o", "o", ""]]],
-          
-    T: [[["", "o", ""],
-          ["o", "o", "o"],
-          ["", "", ""]],
-        [["", "o", ""],
-          ["", "o", "o"],
-          ["", "o", ""]],
-          [["", "", ""],
-          ["o", "o", "o"],
-          ["", "o", ""]],
-          [["", "o", ""],
-          ["o", "o", ""],
-          ["", "o", ""]]],
-  };
-
-  const srs_chart = {
-    I: [[
-          [[0, 0], [-2, 0], [1, 0], [-2, 1], [1, -2]], [[0, 0], [1, 0], [-2, 0], [1, 2], [-2, -1]]
-        ],
-        [
-          [[0, 0], [-1, 0], [2, 0], [-1, -2], [2, 1]], [[0, 0], [-2, 0], [1, 0], [-2, 1], [1, -2]]
-        ],
-        [
-          [[0, 0], [2, 0], [-1, 0], [2, -1], [-1, 2]], [[0, 0], [-1, 0], [2, 0], [-1, -2], [2, 1]]
-        ],
-        [
-          [[0, 0], [1, 0], [-2, 0], [1, 2], [-2, -1]], [[0, 0], [2, 0], [-1, 0], [2, -1], [-1, 2]]
-        ]],
-
-    S: [[
-          [[0, 0], [1, 0], [1, -1], [0, 2], [1, 2]], [[0, 0], [-1, 0], [-1, -1], [0, 2], [-1, 2]]
-        ],
-        [
-          [[0, 0], [1, 0], [1, 1], [0, -2], [1, -2]], [[0, 0], [1, 0], [1, 1], [0, -2], [1, -2]]
-        ],
-        [
-          [[0, 0], [-1, 0], [-1, -1], [0, 2], [-1, 2]], [[0, 0], [1, 0], [1, -1], [0, 2], [1, 2]]
-        ],
-        [
-          [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]], [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]]
-        ]],
-
-    Z: [[
-          [[0, 0], [1, 0], [1, -1], [0, 2], [1, 2]], [[0, 0], [-1, 0], [-1, -1], [0, 2], [-1, 2]]
-        ],
-        [
-          [[0, 0], [1, 0], [1, 1], [0, -2], [1, -2]], [[0, 0], [1, 0], [1, 1], [0, -2], [1, -2]]
-        ],
-        [
-          [[0, 0], [-1, 0], [-1, -1], [0, 2], [-1, 2]], [[0, 0], [1, 0], [1, -1], [0, 2], [1, 2]]
-        ],
-        [
-          [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]], [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]]
-        ]],
-
-    L: [[
-          [[0, 0], [1, 0], [1, -1], [0, 2], [1, 2]], [[0, 0], [-1, 0], [-1, -1], [0, 2], [-1, 2]]
-        ],
-        [
-          [[0, 0], [1, 0], [1, 1], [0, -2], [1, -2]], [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]]
-        ],
-        [
-          [[0, 0], [-1, 0], [-1, -1], [0, 2], [-1, 2]], [[0, 0], [1, 0], [1, -1], [0, 2], [1, 2]]
-        ],
-        [
-          [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]], [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]]
-        ]],
-
-    J: [[
-          [[0, 0], [1, 0], [1, -1], [0, 2], [1, 2]], [[0, 0], [-1, 0], [-1, -1], [0, 2], [-1, 2]]
-        ],
-        [
-          [[0, 0], [1, 0], [1, 1], [0, -2], [1, -2]], [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]]
-        ],
-        [
-          [[0, 0], [-1, 0], [-1, -1], [0, 2], [-1, 2]], [[0, 0], [1, 0], [1, -1], [0, 2], [1, 2]]
-        ],
-        [
-          [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]], [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]]
-        ]],
-
-    T: [[
-          [[0, 0], [1, 0], [1, -1], [0, 2], [1, 2]], [[0, 0], [-1, 0], [-1, -1], [0, 2], [-1, 2]]
-        ],
-        [
-          [[0, 0], [1, 0], [1, 1], [0 -2], [1, -2]], [[0, 0], [1, 0], [1, 1], [0 -2], [1, -2]]
-        ],
-        [
-          [[0, 0], [-1, 0], [-1, -1], [0, 2], [-1, 2]], [[0, 0], [1, 0], [1, -1], [0, 2], [1, 2]]
-        ],
-        [
-          [[0, 0], [-1, 0], [-1, 1], [0 -2], [-1, -2]], [[0, 0], [-1, 0], [-1, 1], [0 -2], [-1, -2]]
-        ]],
-  };
-
   //rotation updates
   const prev_rotation = rotation.current;
   if(event.toLowerCase() === "z") {
@@ -185,34 +19,53 @@ export const blockControl = (event: string, gridArr: string[][], setGridArr: Rea
   let currentShape = shapeChart[shape.current as keyof typeof shapeChart][rotation.current];
   const newGrid = structuredClone(gridArr);
 
-  const shapeCenter = Math.floor(currentShape[0].length/2);
-  const shapeEdges = [3, 0]; //default to both extremes
+  const {offsetTop, offsetLeft} = outerOffsets(currentShape)
 
-  currentShape.forEach((row) => {
-    const tempL = row.indexOf("o");
-    const tempR = row.lastIndexOf("o");
-
-    shapeEdges[0] = (tempL >= 0 && tempL < shapeEdges[0]) ? tempL : shapeEdges[0];
-    shapeEdges[1] = tempR > shapeEdges[1] ? tempR : shapeEdges[1];
-  });
-
-  const offsets = [shapeEdges[0] - shapeCenter, shapeEdges[1] + 1 - shapeCenter];
+  const offsets = innerOffsets(currentShape);
   
   if(event === "ArrowRight" && centerPoint[0] + offsets[1] < 10) {
-    centerPoint[0]++;
+
+    let isValid = true;
+
+    currentShape.some((row, yIndex) => {
+        return row.some((item, xIndex) => {
+            const y = centerPoint[1] + yIndex + offsetTop;
+            const x = centerPoint[0] + xIndex + offsetLeft;
+            if(gridArr[y][x+1] === "[x]" && item === "o") {
+              isValid = false;
+              return true;
+            }
+        });
+    });
+
+    if(isValid) {
+      centerPoint[0]++;
+    }
   }else if(event === "ArrowLeft" && centerPoint[0] + offsets[0] > 0) {
-    centerPoint[0]--;
+    let isValid = true;
+
+    currentShape.some((row, yIndex) => {
+        return row.some((item, xIndex) => {
+            const y = centerPoint[1] + yIndex + offsetTop;
+            const x = centerPoint[0] + xIndex + offsetLeft;
+            if(gridArr[y][x-1] === "[x]" && item === "o") { //checking pos post-shift
+              isValid = false;
+              return true;
+            }
+        });
+    });
+
+    if(isValid) {
+      centerPoint[0]--;
+    }
   }else if(event === "ArrowDown") {
     //deal with later
   }else if(event === " ") {
-    console.log("spacebar");
     const bottom_blocks = new Array(currentShape[0].length).fill(-1);
-    const offsetTop = currentShape.length%2 === 0 ? -2 : -1;
-    const offsetLeft = currentShape[0].length%2 === 0 ? -2 : -1;
 
     for(let y=currentShape.length-1; y>=0; y--) { //find lowest point in each x pos
       for(let x=0; x<bottom_blocks.length; x++) {
-        if(currentShape[y][x] === "o") {
+        if(currentShape[y][x] === "o" && bottom_blocks[x] < y) {
           bottom_blocks[x] = y;
         }
       }
@@ -224,10 +77,12 @@ export const blockControl = (event: string, gridArr: string[][], setGridArr: Rea
     let downShift = 0;
     let falling = true;
 
+    console.log(bottom_blocks);
+
     while(falling) {
-      //console.log(Math.max(...bottom_blocks));
-      if(centerPoint[1] + Math.max(...bottom_blocks) + offsetTop + downShift === 19) { //failing to enter this statement...
-        //console.log("bottom of board");
+      if(centerPoint[1] + Math.max(...bottom_blocks) + offsetTop + downShift === 19) {
+        console.log("bottom of board");
+        console.log(Math.max(...bottom_blocks));
         falling = false;
       }else{
         bottom_blocks.forEach((yIndex, xIndex) => {
@@ -245,11 +100,13 @@ export const blockControl = (event: string, gridArr: string[][], setGridArr: Rea
     }
  
     currentShape.forEach((row, yIndex) => {
-      row.forEach((item, xIndex) => {
+      row.forEach((_item, xIndex) => {
         const y = centerPoint[1] + yIndex + offsetTop + downShift;
         const x = centerPoint[0] + xIndex + offsetLeft;
+        console.log({centerPoint, xIndex, offsets});
         if(x >= 0 && y >= 0 && currentShape[yIndex][xIndex] !== "") {
           newGrid[y][x] = "[x]";
+          console.log({x, y});
         }
       });
     });
@@ -263,7 +120,7 @@ export const blockControl = (event: string, gridArr: string[][], setGridArr: Rea
       rotationObject = srs_chart[shape.current as keyof typeof srs_chart][rotation.current][1];
     }
 
-    const shift = rotationCheck(gridArr, centerPoint, currentShape, offsets, rotationObject);
+    const shift = rotationCheck(gridArr, centerPoint, currentShape, rotationObject);
 
     if(shift[0] === 999) { //rotation failed
       rotation.current = prev_rotation;

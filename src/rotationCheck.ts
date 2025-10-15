@@ -1,8 +1,10 @@
+import { innerOffsets } from "./innerOffsets";
+import { outerOffsets } from "./outerOffsets";
 
-
-export const rotationCheck = (gridArr: string[][], centerPoint: number[], currentShape: string[][], offsets: number[], srsChecks: number[][]) => {
+export const rotationCheck = (gridArr: string[][], centerPoint: number[], currentShape: string[][], srsChecks: number[][]) => {
     
-    const offsetTop = currentShape.length%2 === 0 ? -2 : -1;
+    const {offsetTop, offsetLeft} = outerOffsets(currentShape)
+    const offsets = innerOffsets(currentShape);
 
     let returnVal: number[] = [999, 999];
     
@@ -12,16 +14,14 @@ export const rotationCheck = (gridArr: string[][], centerPoint: number[], curren
             let breakFlag = false;
             
             currentShape.some((row, yIndex) => {
-                row.some((item, xIndex) => {
-                    const y = centerPoint[1] + yIndex + offsetTop;
-                    const x = centerPoint[0] + xIndex + offsets[0];
-                    if(y < 0 || gridArr[y][x] === "[x]") { //x position already valid in terms of walls
-                        breakFlag = true;
+                return row.some((item, xIndex) => {
+                    const y = centerPoint[1] + yIndex + offsetTop + shift[0];
+                    const x = centerPoint[0] + xIndex + offsetLeft + shift[1];
+                    console.log({x, y, shift});
+                    if(y > 19 || (gridArr[y][x] === "[x]" && item !== "")) {
+                        return true;
                     }
-
-                    return breakFlag; //leaves loop early if invalid position
                 });
-                return breakFlag;
             });
 
             if(!breakFlag) { //got through all loops without invalid position

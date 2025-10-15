@@ -1,8 +1,9 @@
-export const block = (centerPoint: number[], currentShape: string[][], gridArr: string[][], setGridArr: React.Dispatch<React.SetStateAction<string[][]>>) => {
+import { outerOffsets } from "./outerOffsets";
+
+export const block = (centerPoint: number[], currentShape: string[][], gridArr: string[][], setGridArr: ((gridArr: string[][]) => void)) => {
     //possible shapes: O, I, S, Z, L, J, T
 
-    const offsetTop = currentShape.length%2 === 0 ? -2 : -1;
-    const offsetLeft = currentShape[0].length%2 === 0 ? -2 : -1;
+    const {offsetTop, offsetLeft} = outerOffsets(currentShape)
 
     //checking for out of bounds or if landed will be handled by a diff function  
     
@@ -16,7 +17,7 @@ export const block = (centerPoint: number[], currentShape: string[][], gridArr: 
     });
  
     currentShape.forEach((row, yIndex) => {
-      row.forEach((item, xIndex) => {
+      row.forEach((_item, xIndex) => {
         const y = centerPoint[1] + yIndex + offsetTop;
         const x = centerPoint[0] + xIndex + offsetLeft;
         if(x >= 0 && y >= 0 && currentShape[yIndex][xIndex] !== "") {
@@ -25,6 +26,5 @@ export const block = (centerPoint: number[], currentShape: string[][], gridArr: 
       });
     });
 
-    console.log({newGrid});
     setGridArr(newGrid);
 }
