@@ -1,6 +1,6 @@
 import { outerOffsets } from "./outerOffsets";
 
-export const block = (centerPoint: number[], currentShape: string[][], gridArr: string[][], setGridArr: ((gridArr: string[][]) => void)) => {
+export const updateActiveBlock = (centerPoint: number[], currentShape: string[][], gridArr: string[][]) => {
     //possible shapes: O, I, S, Z, L, J, T
 
     const {offsetTop, offsetLeft} = outerOffsets(currentShape)
@@ -26,5 +26,5 @@ export const block = (centerPoint: number[], currentShape: string[][], gridArr: 
       });
     });
 
-    setGridArr(newGrid);
+    return newGrid;
 }
