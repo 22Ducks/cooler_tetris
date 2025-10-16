@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import styled from 'styled-components'
 import { GameCanvas } from './GameCanvas'
-import { blockControl } from './blockControl'
+import { calcBlockMovement, quickDrop } from './blockControl'
 import { setCanvas } from './setCanvas'
+import { updateActiveBlock } from './updateActiveBlock'
+import { shapeChart } from './constants'
 
 const ContainerDiv = styled.div `
 display: flex;
@@ -58,21 +60,37 @@ const TimerDiv = styled.div `
 height: 30%;
 `
 
+type BlockDef = {
+  shape: string;
+  rotation: number;
+  centerPoint: [number, number];
+}
+
+const defaultBlock = {
+  shape: "T",
+  rotation: 0,
+  centerPoint: [5, 5] as [number, number]
+}
+
 function App() {
 
   const [gridArr, setGridArr] = useState<string[][]>(new Array(20).fill("").map(() => new Array(10).fill("")));
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  const [blockData, setBlockData] = useState<BlockDef>(defaultBlock);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const shape = useRef("T");
-  const rotation = useRef(1);
-  const centerPoint = useRef([5, 5]);
+  const {shape, rotation, centerPoint} = blockData;
+  const currentShape = shapeChart[shape as keyof typeof shapeChart][rotation];
+  // const shape = useRef("T");
+  // const rotation = useRef(1);
+  // const centerPoint = useRef([5, 5]);
 
   const gameDimensions = [window.innerHeight*0.4, window.innerHeight*0.8];
 
   useEffect(() => { //on first render only
-    blockControl("Init", gridArr, setGridArr, shape, rotation, centerPoint.current);
+    const newGrid = updateActiveBlock(centerPoint, currentShape, gridArr);
+    setGridArr(newGrid);
   }, []);
   
   useEffect(() => {
@@ -80,9 +98,18 @@ function App() {
     setCanvas(gridArr, gameDimensions, canvasRef);
     
     const handleKeyDown = (event: KeyboardEvent) => {
+      if(event.key === " ") {
+        const newGrid = quickDrop(gridArr, blockData);
+        setGridArr(newGrid);
+        return;
+      }
+
       console.log( event.key );
-      //console.log("HANDLEKEYDOWN: ", gridArr);
-      blockControl(event.key, gridArr, setGridArr, shape, rotation, centerPoint.current);
+      const newData = calcBlockMovement(event.key, gridArr, blockData);
+      setBlockData(newData);
+      const updatedShape = shapeChart[shape as keyof typeof shapeChart][newData.rotation];
+      const newGrid = updateActiveBlock(newData.centerPoint, updatedShape, gridArr);
+      setGridArr(newGrid);
     };
 
     document.addEventListener('keydown', handleKeyDown);
