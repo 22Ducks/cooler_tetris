@@ -6,6 +6,8 @@ import { calcBlockMovement, quickDrop } from './blockControl'
 import { setCanvas } from './setCanvas'
 import { updateActiveBlock } from './updateActiveBlock'
 import { shapeChart } from './constants'
+import type { BlockDef } from './blockControl'
+import { generateUpNext } from './generateUpNext'
 
 const ContainerDiv = styled.div `
 display: flex;
@@ -60,16 +62,10 @@ const TimerDiv = styled.div `
 height: 30%;
 `
 
-type BlockDef = {
-  shape: string;
-  rotation: number;
-  centerPoint: [number, number];
-}
-
-const defaultBlock = {
+export const defaultBlock = {
   shape: "T",
   rotation: 0,
-  centerPoint: [5, 5] as [number, number]
+  centerPoint: [5, 2] as [number, number]
 }
 
 function App() {
@@ -77,14 +73,12 @@ function App() {
   const [gridArr, setGridArr] = useState<string[][]>(new Array(20).fill("").map(() => new Array(10).fill("")));
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
   const [blockData, setBlockData] = useState<BlockDef>(defaultBlock);
+  const [upNext, setUpNext] = useState<BlockDef>(generateUpNext());
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const {shape, rotation, centerPoint} = blockData;
   const currentShape = shapeChart[shape as keyof typeof shapeChart][rotation];
-  // const shape = useRef("T");
-  // const rotation = useRef(1);
-  // const centerPoint = useRef([5, 5]);
 
   const gameDimensions = [window.innerHeight*0.4, window.innerHeight*0.8];
 
@@ -101,6 +95,14 @@ function App() {
       if(event.key === " ") {
         const newGrid = quickDrop(gridArr, blockData);
         setGridArr(newGrid);
+
+        setBlockData(upNext);
+        const resetShape = shapeChart[upNext.shape as keyof typeof shapeChart][upNext.rotation];
+        setGridArr(updateActiveBlock(upNext.centerPoint, resetShape, newGrid));
+
+        const newNext = generateUpNext();
+        setUpNext(newNext);
+
         return;
       }
 
@@ -126,7 +128,6 @@ function App() {
 
     window.addEventListener('resize', handleResize);
 
-    // Clean up the event listener when the component unmounts
     return () => {
       window.removeEventListener('resize', handleResize);
     };

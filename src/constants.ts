@@ -1,3 +1,5 @@
+export const shapeList = ["O", "I", "S", "Z", "L", "J", "T"];
+
 export const shapeChart = {
     O: [[["", "o", "o", ""],
             ["", "o", "o", ""],
