@@ -106,7 +106,7 @@ function App() {
         return;
       }
 
-      console.log( event.key );
+      //console.log( event.key );
       const newData = calcBlockMovement(event.key, gridArr, blockData);
       setBlockData(newData);
       const updatedShape = shapeChart[shape][newData.rotation];
