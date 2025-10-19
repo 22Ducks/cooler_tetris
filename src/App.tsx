@@ -2,7 +2,12 @@ import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import styled from 'styled-components'
 import { GameCanvas } from './GameCanvas'
-import { blockControl } from './blockControl'
+import { calcBlockMovement, quickDrop } from './blockControl'
+import { setCanvas } from './setCanvas'
+import { updateActiveBlock } from './updateActiveBlock'
+import { shapeChart } from './constants'
+import type { BlockDef } from './blockControl'
+import { generateUpNext } from './generateUpNext'
 
 const ContainerDiv = styled.div `
 display: flex;
@@ -57,56 +62,63 @@ const TimerDiv = styled.div `
 height: 30%;
 `
 
+export const defaultBlock = {
+  shape: "T",
+  rotation: 0,
+  centerPoint: [5, 2] as [number, number]
+}
+
 function App() {
 
   const [gridArr, setGridArr] = useState<string[][]>(new Array(20).fill("").map(() => new Array(10).fill("")));
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  const [blockData, setBlockData] = useState<BlockDef>(defaultBlock);
+  const [upNext, setUpNext] = useState<BlockDef>(generateUpNext());
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const shape = useRef("I");
-  const rotation = useRef(1);
-  const centerPoint = useRef([5, 5]);
+  const {shape, rotation, centerPoint} = blockData;
+  const currentShape = shapeChart[shape as keyof typeof shapeChart][rotation];
 
   const gameDimensions = [window.innerHeight*0.4, window.innerHeight*0.8];
 
   useEffect(() => { //on first render only
-    blockControl("Init", gridArr, setGridArr, shape, rotation, centerPoint.current);
-    
-    const handleKeyDown = (event: KeyboardEvent) => {
-      console.log( event.key );
-      blockControl(event.key, gridArr, setGridArr, shape, rotation, centerPoint.current);
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
+    const newGrid = updateActiveBlock(centerPoint, currentShape, gridArr);
+    setGridArr(newGrid);
   }, []);
   
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (canvas) {
-      const ctx = canvas.getContext('2d');
-      if(ctx) {
-        gridArr.forEach((row, yInd) => {
-          row.forEach((item, xInd) => {
-            if(item === "[x]") {
-              ctx.fillStyle = "#7cce70ff"
-            } else if(item === "") {
-              ctx.fillStyle = "#222222ff"
-            } else {
-              ctx.fillStyle = "#47cc33ff"
-            }
-            ctx.fillRect(xInd*(gameDimensions[0]/10), yInd*(gameDimensions[1]/20), gameDimensions[0]/10, gameDimensions[1]/10);
-            ctx.rect(xInd*(gameDimensions[0]/10), yInd*(gameDimensions[1]/20), gameDimensions[0]/10, gameDimensions[1]/10);
-          });
-        });
-        ctx.strokeStyle = "#aaaaaaff";
-        ctx.stroke();
+
+    setCanvas(gridArr, gameDimensions, canvasRef);
+    
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if(event.key === " ") {
+        const newGrid = quickDrop(gridArr, blockData);
+        setGridArr(newGrid);
+
+        setBlockData(upNext);
+        const resetShape = shapeChart[upNext.shape as keyof typeof shapeChart][upNext.rotation];
+        setGridArr(updateActiveBlock(upNext.centerPoint, resetShape, newGrid));
+
+        const newNext = generateUpNext();
+        setUpNext(newNext);
+
+        return;
       }
-    }
+
+      console.log( event.key );
+      const newData = calcBlockMovement(event.key, gridArr, blockData);
+      setBlockData(newData);
+      const updatedShape = shapeChart[shape as keyof typeof shapeChart][newData.rotation];
+      const newGrid = updateActiveBlock(newData.centerPoint, updatedShape, gridArr);
+      setGridArr(newGrid);
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, [gridArr, windowHeight]);
 
   useEffect(() => {
@@ -116,7 +128,6 @@ function App() {
 
     window.addEventListener('resize', handleResize);
 
-    // Clean up the event listener when the component unmounts
     return () => {
       window.removeEventListener('resize', handleResize);
     };
