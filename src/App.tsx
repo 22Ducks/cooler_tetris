@@ -8,6 +8,8 @@ import { updateActiveBlock } from './updateActiveBlock'
 import { Shape, shapeChart } from './constants'
 import type { BlockDef } from './blockControl'
 import { generateUpNext } from './generateUpNext'
+import { canFall } from './canFall'
+import { outerOffsets } from './outerOffsets'
 
 const ContainerDiv = styled.div `
 display: flex;
@@ -74,6 +76,7 @@ function App() {
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
   const [blockData, setBlockData] = useState<BlockDef>(defaultBlock);
   const [upNext, setUpNext] = useState<BlockDef>(generateUpNext());
+  const [fallInterval, setFallInterval] = useState(1000);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -86,6 +89,49 @@ function App() {
     const newGrid = updateActiveBlock(centerPoint, currentShape, gridArr);
     setGridArr(newGrid);
   }, []);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setGridArr((prevGridArr) => {
+        if(canFall(centerPoint, currentShape, prevGridArr)) { //move block down by 1
+
+          const newGrid = updateActiveBlock([centerPoint[0], centerPoint[1]+1], currentShape, prevGridArr);
+          setBlockData((prevData) => {
+            return {shape: prevData.shape, rotation: prevData.rotation, centerPoint: [prevData.centerPoint[0], prevData.centerPoint[1]+1]};
+          });
+
+          return newGrid;
+        }
+
+        const newPlacement = structuredClone(prevGridArr);
+        const {offsetTop, offsetLeft} = outerOffsets(currentShape);
+
+        currentShape.forEach((row, yIndex) => {
+          row.forEach((_item, xIndex) => {
+            const y = centerPoint[1] + yIndex + offsetTop;
+            const x = centerPoint[0] + xIndex + offsetLeft;
+            if(x >= 0 && y >= 0 && currentShape[yIndex][xIndex] !== "") {
+              newPlacement[y][x] = "[x]";
+            }
+          });
+        });
+
+        setBlockData(upNext);
+        const resetShape = shapeChart[upNext.shape][upNext.rotation];
+        const newGrid = updateActiveBlock(upNext.centerPoint, resetShape, newPlacement);
+
+        const newNext = generateUpNext();
+        setUpNext(newNext);
+
+        return newGrid;
+      });
+    }, 1000); // Update every 1 second
+
+    // Clean up the interval when the component unmounts or dependencies change
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [fallInterval]);
   
   useEffect(() => {
 
