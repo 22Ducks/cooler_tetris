@@ -91,7 +91,6 @@ export const quickDrop = (gridArr: string[][], blockDef: BlockDef) => {
   const {offsetTop, offsetLeft} = outerOffsets(currentShape);
 
   const trans = R.transpose(gridArr);
-  console.log(trans);
   const spacing: number[] = [];
 
   trans.forEach((col) => {
@@ -106,14 +105,33 @@ export const quickDrop = (gridArr: string[][], blockDef: BlockDef) => {
 
   const newGrid = structuredClone(gridArr);
 
+  const updatedYs: number[] = [];
+
   currentShape.forEach((row, yIndex) => {
     row.forEach((_item, xIndex) => {
       const y = centerPoint[1] + yIndex + offsetTop + downShift;
       const x = centerPoint[0] + xIndex + offsetLeft;
       if(x >= 0 && y >= 0 && currentShape[yIndex][xIndex] !== "") {
         newGrid[y][x] = "[x]";
+        if(updatedYs.indexOf(y) === -1) {
+          updatedYs.push(y);
+        }
       }
     });
+  });
+
+  const clearedLines: number[] = [];
+
+  updatedYs.forEach((y) => {
+    if(newGrid[y].every(item => item === "[x]")) {
+      clearedLines.push(y);
+    }
+  });
+
+  clearedLines.forEach((y) => {
+    for(let i=y-1; i>=0; i--) {
+      newGrid[i+1] = newGrid[i];
+    }
   });
 
   return newGrid;
