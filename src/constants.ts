@@ -1,6 +1,16 @@
-export const shapeList = ["O", "I", "S", "Z", "L", "J", "T"];
+export enum Shape {
+    O = "O",
+    I = "I",
+    S = "S",
+    Z = "Z",
+    L = "L",
+    J = "J",
+    T = "T"
+}
 
-export const shapeChart = {
+export const shapeList = Object.values(Shape);
+
+export const shapeChart: Record<Shape, string[][][]> = {
     O: [[["", "o", "o", ""],
             ["", "o", "o", ""],
             ["", "", "", ""]]],
@@ -88,7 +98,17 @@ export const shapeChart = {
             ["", "o", ""]]],
 };
 
-export const srs_chart = {
+type Shift = [number, number];
+type ShiftOptions = [Shift, Shift, Shift, Shift, Shift];
+type ShiftOptionTuple = [ShiftOptions, ShiftOptions];
+
+type ShapeType = Record<Shape, string>;
+type RotateableShapes = keyof Omit<ShapeType, Shape.O>;
+
+/**
+ * TODO: add desc and link
+ */
+export const srs_chart: Record<RotateableShapes, number[][][][]> = {
     I: [[
             [[0, 0], [-2, 0], [1, 0], [-2, 1], [1, -2]], [[0, 0], [1, 0], [-2, 0], [1, 2], [-2, -1]]
         ],
@@ -158,12 +178,12 @@ export const srs_chart = {
             [[0, 0], [1, 0], [1, -1], [0, 2], [1, 2]], [[0, 0], [-1, 0], [-1, -1], [0, 2], [-1, 2]]
         ],
         [
-            [[0, 0], [1, 0], [1, 1], [0 -2], [1, -2]], [[0, 0], [1, 0], [1, 1], [0 -2], [1, -2]]
+            [[0, 0], [1, 0], [1, 1], [0, -2], [1, -2]], [[0, 0], [1, 0], [1, 1], [0, -2], [1, -2]]
         ],
         [
             [[0, 0], [-1, 0], [-1, -1], [0, 2], [-1, 2]], [[0, 0], [1, 0], [1, -1], [0, 2], [1, 2]]
         ],
         [
-            [[0, 0], [-1, 0], [-1, 1], [0 -2], [-1, -2]], [[0, 0], [-1, 0], [-1, 1], [0 -2], [-1, -2]]
+            [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]], [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]]
         ]],
 };

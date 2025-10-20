@@ -5,7 +5,7 @@ import { GameCanvas } from './GameCanvas'
 import { calcBlockMovement, quickDrop } from './blockControl'
 import { setCanvas } from './setCanvas'
 import { updateActiveBlock } from './updateActiveBlock'
-import { shapeChart } from './constants'
+import { Shape, shapeChart } from './constants'
 import type { BlockDef } from './blockControl'
 import { generateUpNext } from './generateUpNext'
 
@@ -63,7 +63,7 @@ height: 30%;
 `
 
 export const defaultBlock = {
-  shape: "T",
+  shape: Shape.T,
   rotation: 0,
   centerPoint: [5, 2] as [number, number]
 }
@@ -78,7 +78,7 @@ function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const {shape, rotation, centerPoint} = blockData;
-  const currentShape = shapeChart[shape as keyof typeof shapeChart][rotation];
+  const currentShape = shapeChart[shape][rotation];
 
   const gameDimensions = [window.innerHeight*0.4, window.innerHeight*0.8];
 
@@ -97,7 +97,7 @@ function App() {
         setGridArr(newGrid);
 
         setBlockData(upNext);
-        const resetShape = shapeChart[upNext.shape as keyof typeof shapeChart][upNext.rotation];
+        const resetShape = shapeChart[upNext.shape][upNext.rotation];
         setGridArr(updateActiveBlock(upNext.centerPoint, resetShape, newGrid));
 
         const newNext = generateUpNext();
@@ -109,7 +109,7 @@ function App() {
       console.log( event.key );
       const newData = calcBlockMovement(event.key, gridArr, blockData);
       setBlockData(newData);
-      const updatedShape = shapeChart[shape as keyof typeof shapeChart][newData.rotation];
+      const updatedShape = shapeChart[shape][newData.rotation];
       const newGrid = updateActiveBlock(newData.centerPoint, updatedShape, gridArr);
       setGridArr(newGrid);
     };

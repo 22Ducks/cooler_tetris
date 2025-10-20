@@ -1,20 +1,37 @@
 import { innerOffsets } from "./innerOffsets";
 import { outerOffsets } from "./outerOffsets";
 
+declare global {
+    interface Window {
+        x: any;
+        y: any;
+        shift: any;
+        srsChecks: any;
+    }
+}
+
 export const rotationCheck = (gridArr: string[][], centerPoint: number[], currentShape: string[][], srsChecks: number[][]) => {
     
-    const {offsetTop, offsetLeft} = outerOffsets(currentShape)
+    const {offsetTop, offsetLeft} = outerOffsets(currentShape);
     const offsets = innerOffsets(currentShape);
 
     let returnVal: number[] = [999, 999];
+
+    window.srsChecks = srsChecks;
     
     srsChecks.some((shift) => {
         if(centerPoint[0] + offsets[0] + shift[0] >= 0 && centerPoint[0] + offsets[1] + shift[0] <= 10) { //not out-of-bounds
             
             const isInvalid = currentShape.some((row, yIndex) => {
                 return row.some((item, xIndex) => {
-                    const y = centerPoint[1] + yIndex + offsetTop + shift[0];
-                    const x = centerPoint[0] + xIndex + offsetLeft + shift[1];
+                    const y = centerPoint[1] + yIndex + offsetTop + shift[1];
+                    const x = centerPoint[0] + xIndex + offsetLeft + shift[0];
+                    window.x = x;
+                    window.y = y;
+                    window.shift = shift;
+                    if(y < 0) {
+                        return false;
+                    }
                     if(y > 19 || (gridArr[y][x] === "[x]" && item !== "")) {
                         return true;
                     }
