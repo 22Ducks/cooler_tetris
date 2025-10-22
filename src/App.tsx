@@ -73,7 +73,7 @@ function App() {
 
   const [gridArr, setGridArr] = useState<string[][]>(new Array(20).fill("").map(() => new Array(10).fill("")));
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
-  const [blockData, setBlockData] = useState<BlockDef>(defaultBlock);
+  const [blockData, setBlockData] = useState<BlockDef>(generateUpNext());
   const [upNext, setUpNext] = useState<BlockDef>(generateUpNext());
   const [fallInterval, setFallInterval] = useState(1000);
 
@@ -91,11 +91,12 @@ function App() {
       clearInterval(intervalId);
     };
   }, [fallInterval]);
-  
-  useEffect(() => {
 
+  useEffect(() => {
     drawCanvas(gridArr, blockData, gameDimensions, canvasRef);
-    
+  }, [windowHeight, gridArr, blockData]);
+  
+  useEffect(() => {    
     const handleKeyDown = (event: KeyboardEvent) => {
       if(event.key === " ") {
         const newGrid = quickDrop(gridArr, blockData);
@@ -119,7 +120,7 @@ function App() {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [gridArr, blockData, windowHeight]);
+  }, [gridArr, blockData]);
 
   useEffect(() => {
     const handleResize = () => {

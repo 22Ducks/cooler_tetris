@@ -90,16 +90,20 @@ export const quickDrop = (gridArr: string[][], blockDef: BlockDef) => {
 
   const {offsetTop, offsetLeft} = outerOffsets(currentShape);
 
+  const transShape = R.transpose(currentShape);  
   const trans = R.transpose(gridArr);
   const spacing: number[] = [];
+  
+  transShape.forEach((col, xInd) => {
+    const localLastIndex = col.lastIndexOf("o");
+    if(localLastIndex >= 0) {
+      const currentCol = centerPoint[0] + offsetLeft + xInd;
 
-  trans.forEach((col) => {
-    const lastIndex = col.lastIndexOf("[o]");
-    const topIndex = col.slice(lastIndex).indexOf("[x]") >= 0 ? col.slice(lastIndex).indexOf("[x]") + lastIndex : 20;
-    if(lastIndex >= 0) {
-      spacing.push(topIndex - lastIndex);
+      const lastIndex = centerPoint[1] + offsetTop + localLastIndex;
+      const topSurfaceIndex = trans[currentCol].slice(lastIndex).indexOf("[x]") >= 0 ? trans[currentCol].slice(lastIndex).indexOf("[x]") + lastIndex : 20;
+      spacing.push(topSurfaceIndex - lastIndex);
     }
-  })
+  });
 
   const downShift = Math.min(...spacing) - 1;
 
