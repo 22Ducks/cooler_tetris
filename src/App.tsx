@@ -3,8 +3,7 @@ import './App.css'
 import styled from 'styled-components'
 import { GameCanvas } from './GameCanvas'
 import { calcBlockMovement, quickDrop } from './blockControl'
-import { setCanvas } from './setCanvas'
-import { updateActiveBlock } from './updateActiveBlock'
+import { drawCanvas } from './drawCanvas'
 import { Shape, shapeChart } from './constants'
 import type { BlockDef } from './blockControl'
 import { generateUpNext } from './generateUpNext'
@@ -80,51 +79,11 @@ function App() {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const {shape, rotation, centerPoint} = blockData;
-  const currentShape = shapeChart[shape][rotation];
-
   const gameDimensions = [window.innerHeight*0.4, window.innerHeight*0.8];
-
-  useEffect(() => { //on first render only
-    const newGrid = updateActiveBlock(centerPoint, currentShape, gridArr);
-    setGridArr(newGrid);
-  }, []);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setGridArr((prevGridArr) => {
-        if(canFall(centerPoint, currentShape, prevGridArr)) { //move block down by 1
-
-          const newGrid = updateActiveBlock([centerPoint[0], centerPoint[1]+1], currentShape, prevGridArr);
-          setBlockData((prevData) => {
-            return {shape: prevData.shape, rotation: prevData.rotation, centerPoint: [prevData.centerPoint[0], prevData.centerPoint[1]+1]};
-          });
-
-          return newGrid;
-        }
-
-        const newPlacement = structuredClone(prevGridArr);
-        const {offsetTop, offsetLeft} = outerOffsets(currentShape);
-
-        currentShape.forEach((row, yIndex) => {
-          row.forEach((_item, xIndex) => {
-            const y = centerPoint[1] + yIndex + offsetTop;
-            const x = centerPoint[0] + xIndex + offsetLeft;
-            if(x >= 0 && y >= 0 && currentShape[yIndex][xIndex] !== "") {
-              newPlacement[y][x] = "[x]";
-            }
-          });
-        });
-
-        setBlockData(upNext);
-        const resetShape = shapeChart[upNext.shape][upNext.rotation];
-        const newGrid = updateActiveBlock(upNext.centerPoint, resetShape, newPlacement);
-
-        const newNext = generateUpNext();
-        setUpNext(newNext);
-
-        return newGrid;
-      });
+      //bah
     }, 1000); // Update every 1 second
 
     // Clean up the interval when the component unmounts or dependencies change
@@ -135,7 +94,7 @@ function App() {
   
   useEffect(() => {
 
-    setCanvas(gridArr, gameDimensions, canvasRef);
+    drawCanvas(gridArr, blockData, gameDimensions, canvasRef);
     
     const handleKeyDown = (event: KeyboardEvent) => {
       if(event.key === " ") {
@@ -143,8 +102,6 @@ function App() {
         setGridArr(newGrid);
 
         setBlockData(upNext);
-        const resetShape = shapeChart[upNext.shape][upNext.rotation];
-        setGridArr(updateActiveBlock(upNext.centerPoint, resetShape, newGrid));
 
         const newNext = generateUpNext();
         setUpNext(newNext);
@@ -155,9 +112,6 @@ function App() {
       //console.log( event.key );
       const newData = calcBlockMovement(event.key, gridArr, blockData);
       setBlockData(newData);
-      const updatedShape = shapeChart[shape][newData.rotation];
-      const newGrid = updateActiveBlock(newData.centerPoint, updatedShape, gridArr);
-      setGridArr(newGrid);
     };
 
     document.addEventListener('keydown', handleKeyDown);

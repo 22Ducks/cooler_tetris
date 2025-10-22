@@ -3,7 +3,7 @@ import { outerOffsets } from "./outerOffsets";
 export const updateActiveBlock = (centerPoint: number[], currentShape: string[][], gridArr: string[][]) => {
     //possible shapes: O, I, S, Z, L, J, T
 
-    const {offsetTop, offsetLeft} = outerOffsets(currentShape)
+    const {offsetTop, offsetLeft} = outerOffsets(currentShape);
 
     //checking for out of bounds or if landed will be handled by a diff function  
     
