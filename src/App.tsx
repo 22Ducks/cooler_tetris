@@ -119,7 +119,7 @@ function App() {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [gridArr, windowHeight]);
+  }, [gridArr, blockData, windowHeight]);
 
   useEffect(() => {
     const handleResize = () => {
