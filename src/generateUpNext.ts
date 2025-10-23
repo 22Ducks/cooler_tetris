@@ -8,7 +8,8 @@ export const generateUpNext = () => {
     const nextBlock: BlockDef = {
         shape: shapeList[randomIndex],
         rotation: defaultBlock.rotation,
-        centerPoint: defaultBlock.centerPoint
+        centerPoint: defaultBlock.centerPoint,
+        placed: false
     }
 
     return nextBlock;

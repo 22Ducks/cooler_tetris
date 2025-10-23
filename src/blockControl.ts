@@ -8,6 +8,7 @@ export type BlockDef = {
   shape: Shape;
   rotation: number;
   centerPoint: [number, number];
+  placed: boolean;
 }
 
 export const calcBlockMovement = (event: string, gridArr: string[][], blockDef: BlockDef): BlockDef => {
@@ -23,7 +24,7 @@ export const calcBlockMovement = (event: string, gridArr: string[][], blockDef: 
         return row.some((item, xIndex) => {
             const y = centerPoint[1] + yIndex + offsetTop;
             const x = centerPoint[0] + xIndex + offsetLeft;
-            if(y < 0) {
+            if(y < 0 || item === "") {
               return false;
             }
             if(gridArr[y][x+1] === "[x]" && item === "o") {
@@ -32,7 +33,7 @@ export const calcBlockMovement = (event: string, gridArr: string[][], blockDef: 
         });
     });
 
-    return isInvalid ? blockDef : {shape, rotation, centerPoint: [centerPoint[0]+1, centerPoint[1]]};
+    return isInvalid ? blockDef : {...blockDef, centerPoint: [centerPoint[0]+1, centerPoint[1]]};
 
   }
   
@@ -42,7 +43,7 @@ export const calcBlockMovement = (event: string, gridArr: string[][], blockDef: 
         return row.some((item, xIndex) => {
             const y = centerPoint[1] + yIndex + offsetTop;
             const x = centerPoint[0] + xIndex + offsetLeft;
-            if(y < 0) {
+            if(y < 0 || item === "") {
               return false;
             }
             if(gridArr[y][x-1] === "[x]" && item === "o") { //checking pos post-shift
@@ -51,7 +52,7 @@ export const calcBlockMovement = (event: string, gridArr: string[][], blockDef: 
         });
     });
 
-    return isInvalid ? blockDef : {shape, rotation, centerPoint: [centerPoint[0]-1, centerPoint[1]]};
+    return isInvalid ? blockDef : {...blockDef, centerPoint: [centerPoint[0]-1, centerPoint[1]]};
 
   }
   
@@ -77,13 +78,13 @@ export const calcBlockMovement = (event: string, gridArr: string[][], blockDef: 
 
     const shift = rotationCheck(gridArr, centerPoint, rotatedShape, rotationObject);
 
-    return shift[0] !== 999 ? {shape, "rotation": newRotation, centerPoint: [centerPoint[0] + shift[0], centerPoint[1] + shift[1]]} : blockDef;
+    return shift[0] !== 999 ? {...blockDef, "rotation": newRotation, centerPoint: [centerPoint[0] + shift[0], centerPoint[1] + shift[1]]} : blockDef;
   }
 
   return blockDef;
 }
 
-export const quickDrop = (gridArr: string[][], blockDef: BlockDef) => {
+export const quickDrop = (gridArr: string[][], blockDef: BlockDef): BlockDef => {
 
   const {shape, rotation, centerPoint} = blockDef;
   const currentShape = shapeChart[shape][rotation];
@@ -107,36 +108,5 @@ export const quickDrop = (gridArr: string[][], blockDef: BlockDef) => {
 
   const downShift = Math.min(...spacing) - 1;
 
-  const newGrid = structuredClone(gridArr);
-
-  const updatedYs: number[] = [];
-
-  currentShape.forEach((row, yIndex) => {
-    row.forEach((_item, xIndex) => {
-      const y = centerPoint[1] + yIndex + offsetTop + downShift;
-      const x = centerPoint[0] + xIndex + offsetLeft;
-      if(x >= 0 && y >= 0 && currentShape[yIndex][xIndex] !== "") {
-        newGrid[y][x] = "[x]";
-        if(updatedYs.indexOf(y) === -1) {
-          updatedYs.push(y);
-        }
-      }
-    });
-  });
-
-  const clearedLines: number[] = [];
-
-  updatedYs.forEach((y) => {
-    if(newGrid[y].every(item => item === "[x]")) {
-      clearedLines.push(y);
-    }
-  });
-
-  clearedLines.forEach((y) => {
-    for(let i=y-1; i>=0; i--) {
-      newGrid[i+1] = newGrid[i];
-    }
-  });
-
-  return newGrid;
+  return {shape, rotation, centerPoint: [centerPoint[0], centerPoint[1]+downShift], placed: true};
 }
