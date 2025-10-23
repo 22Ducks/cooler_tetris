@@ -3,11 +3,12 @@ import './App.css'
 import styled from 'styled-components'
 import { GameCanvas } from './GameCanvas'
 import { calcBlockMovement, quickDrop } from './blockControl'
-import { setCanvas } from './setCanvas'
-import { updateActiveBlock } from './updateActiveBlock'
+import { drawCanvas } from './drawCanvas'
 import { Shape, shapeChart } from './constants'
 import type { BlockDef } from './blockControl'
 import { generateUpNext } from './generateUpNext'
+import { canFall } from './canFall'
+import { outerOffsets } from './outerOffsets'
 
 const ContainerDiv = styled.div `
 display: flex;
@@ -71,47 +72,94 @@ export const defaultBlock = {
 function App() {
 
   const [gridArr, setGridArr] = useState<string[][]>(new Array(20).fill("").map(() => new Array(10).fill("")));
+  const currGridArr = useRef<string[][]>(undefined);
+  
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
-  const [blockData, setBlockData] = useState<BlockDef>(defaultBlock);
+  const [blockData, setBlockData] = useState<BlockDef>(generateUpNext());
   const [upNext, setUpNext] = useState<BlockDef>(generateUpNext());
+  const [fallInterval, setFallInterval] = useState(1000);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const {shape, rotation, centerPoint} = blockData;
-  const currentShape = shapeChart[shape][rotation];
-
   const gameDimensions = [window.innerHeight*0.4, window.innerHeight*0.8];
 
-  useEffect(() => { //on first render only
-    const newGrid = updateActiveBlock(centerPoint, currentShape, gridArr);
-    setGridArr(newGrid);
-  }, []);
-  
   useEffect(() => {
+    currGridArr.current = gridArr;
+  }, [gridArr])
 
-    setCanvas(gridArr, gameDimensions, canvasRef);
+  useEffect(() => {
+    const lowerBlock = () => {
+      setBlockData(prevData => {
+        if(!currGridArr.current) {
+          return prevData;
+        }
+        if(canFall(prevData, currGridArr.current)) {
+          return {...prevData, centerPoint: [prevData.centerPoint[0], prevData.centerPoint[1]+1]};
+        }
+
+        return {...prevData, placed: true};
+      });
+    }
+
+    const intervalId = setInterval(() => {
+      lowerBlock();
+    }, fallInterval); // Update every 1 second
+
+    // Clean up the interval when the component unmounts or dependencies change
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [fallInterval]);
+
+  useEffect(() => {
+    const {shape, rotation, centerPoint, placed} = blockData;
     
+    if(placed) {
+      const currentShape = shapeChart[shape][rotation];
+      const {offsetTop, offsetLeft} = outerOffsets(currentShape);
+
+      setGridArr(prevGrid => {
+        const newGrid = structuredClone(prevGrid);
+  
+        currentShape.forEach((row, yIndex) => {
+          row.forEach((_item, xIndex) => {
+            const y = centerPoint[1] + yIndex + offsetTop;
+            const x = centerPoint[0] + xIndex + offsetLeft;
+            if(x >= 0 && y >= 0 && currentShape[yIndex][xIndex] !== "") {
+              newGrid[y][x] = "[x]";
+            }
+          });
+        });
+        return newGrid;
+      });
+
+      setBlockData(upNext);
+
+      const newNext = generateUpNext();
+      setUpNext(newNext);
+    }
+  }, [blockData]);
+
+  useEffect(() => {
+    drawCanvas(gridArr, blockData, gameDimensions, canvasRef);
+  }, [windowHeight, gridArr, blockData]);
+  
+  useEffect(() => {    
     const handleKeyDown = (event: KeyboardEvent) => {
       if(event.key === " ") {
-        const newGrid = quickDrop(gridArr, blockData);
-        setGridArr(newGrid);
+        const newData = quickDrop(gridArr, blockData);
 
-        setBlockData(upNext);
-        const resetShape = shapeChart[upNext.shape][upNext.rotation];
-        setGridArr(updateActiveBlock(upNext.centerPoint, resetShape, newGrid));
-
-        const newNext = generateUpNext();
-        setUpNext(newNext);
+        setBlockData(newData);
 
         return;
       }
 
-      //console.log( event.key );
+      if(event.key === "s" && fallInterval > 250) { //for debugging purposes
+        setFallInterval(prevInterval => prevInterval-250);
+      }
+
       const newData = calcBlockMovement(event.key, gridArr, blockData);
       setBlockData(newData);
-      const updatedShape = shapeChart[shape][newData.rotation];
-      const newGrid = updateActiveBlock(newData.centerPoint, updatedShape, gridArr);
-      setGridArr(newGrid);
     };
 
     document.addEventListener('keydown', handleKeyDown);
@@ -119,7 +167,7 @@ function App() {
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [gridArr, windowHeight]);
+  }, [gridArr, blockData]);
 
   useEffect(() => {
     const handleResize = () => {
