@@ -120,6 +120,7 @@ function App() {
 
       setGridArr(prevGrid => {
         const newGrid = structuredClone(prevGrid);
+        const changedLines: number[] = [];
   
         currentShape.forEach((row, yIndex) => {
           row.forEach((_item, xIndex) => {
@@ -127,9 +128,21 @@ function App() {
             const x = centerPoint[0] + xIndex + offsetLeft;
             if(x >= 0 && y >= 0 && currentShape[yIndex][xIndex] !== "") {
               newGrid[y][x] = "[x]";
+              if(changedLines.indexOf(y) === -1) {
+                changedLines.push(y);
+              }
             }
           });
         });
+
+        changedLines.forEach((yInd) => {
+          if(newGrid[yInd].every(item => item === "[x]")) {
+            for(let i = yInd; i > 0; i--) {
+              newGrid[i] = structuredClone(newGrid[i-1]);
+            }
+          }
+        });
+
         return newGrid;
       });
 
