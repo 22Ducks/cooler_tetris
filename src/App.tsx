@@ -63,6 +63,16 @@ const TimerDiv = styled.div `
 height: 30%;
 `
 
+type IntervalDef = {
+  interval: number;
+  mod: number;
+}
+
+const defaultInterval = {
+  interval: 1000,
+  mod: 1
+}
+
 export const defaultBlock = {
   shape: Shape.T,
   rotation: 0,
@@ -77,7 +87,7 @@ function App() {
   const [windowHeight, setWindowHeight] = useState(window.innerHeight);
   const [blockData, setBlockData] = useState<BlockDef>(generateUpNext());
   const [upNext, setUpNext] = useState<BlockDef>(generateUpNext());
-  const [fallInterval, setFallInterval] = useState(1000);
+  const [fallInterval, setFallInterval] = useState(defaultInterval);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -103,7 +113,7 @@ function App() {
 
     const intervalId = setInterval(() => {
       lowerBlock();
-    }, fallInterval); // Update every 1 second
+    }, (fallInterval.interval*fallInterval.mod));
 
     // Clean up the interval when the component unmounts or dependencies change
     return () => {
@@ -167,18 +177,34 @@ function App() {
         return;
       }
 
-      if(event.key === "s" && fallInterval > 250) { //for debugging purposes
-        setFallInterval(prevInterval => prevInterval-250);
+      if(event.key === "ArrowDown") {
+        if(event.repeat) {
+          return;
+        }
+
+        setFallInterval(prevInterval => {
+          return {...prevInterval, mod: 0.1};
+        });
       }
 
       const newData = calcBlockMovement(event.key, gridArr, blockData);
       setBlockData(newData);
     };
 
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if(event.key === "ArrowDown") {
+        setFallInterval(prevInterval => {
+          return {...prevInterval, mod: 1};
+        });
+      }
+    }
+
     document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
     
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keyup', handleKeyUp);
     };
   }, [gridArr, blockData]);
 
