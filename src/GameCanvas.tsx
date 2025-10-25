@@ -14,15 +14,15 @@ type GameCanvasProps = {
     gridArr: string[][];
     blockData: BlockDef;
     gameDimensions: number[];
-    windowHeight: number;
+    windowDimensions: number[];
 }
 
-export const GameCanvas = ({gridArr, blockData, gameDimensions, windowHeight}: GameCanvasProps) => {
+export const GameCanvas = ({gridArr, blockData, gameDimensions, windowDimensions}: GameCanvasProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
         drawCanvas(gridArr, blockData, gameDimensions, canvasRef);
-    }, [windowHeight, gridArr, blockData]);
+    }, [windowDimensions, gridArr, blockData]);
     
     return <StyleGameCanvas ref={canvasRef} width={gameDimensions[0]} height={gameDimensions[1]}></StyleGameCanvas>
 }

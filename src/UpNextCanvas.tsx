@@ -9,11 +9,11 @@ height: 100%;
 `
 
 type UpNextProps = {
-    upNextDimensions: number[];
+    windowDimensions: number[];
     upNext: BlockDef;
 }
 
-export const UpNextCanvas = ({upNextDimensions, upNext}: UpNextProps) => { //incorrect dimensions?
+export const UpNextCanvas = ({windowDimensions, upNext}: UpNextProps) => { //incorrect dimensions?
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const canvas = canvasRef.current;
     const currentShape = shapeChart[upNext.shape][upNext.rotation];
@@ -24,9 +24,6 @@ export const UpNextCanvas = ({upNextDimensions, upNext}: UpNextProps) => { //inc
 
             const cellWidth = canvas.width / currentShape[0].length;
             const cellHeight = canvas.height / currentShape.length;
-
-            console.log({upNextDimensions});
-            console.log({cellWidth, cellHeight});
 
             if(ctx) {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -52,7 +49,7 @@ export const UpNextCanvas = ({upNextDimensions, upNext}: UpNextProps) => { //inc
                 ctx.closePath();
             }
         }
-    }, [upNextDimensions, upNext]);
+    }, [windowDimensions, upNext]);
 
     return <StyleNextCanvas ref={canvasRef} />
 }

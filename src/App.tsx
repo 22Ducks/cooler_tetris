@@ -24,13 +24,13 @@ border: 1px solid #000000;
 
 function App() {
   
-  const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+  const [windowDimensions, setWindowDimensions] = useState([window.innerWidth, window.innerHeight]);
 
   const gameDimensions = [window.innerHeight*0.4, window.innerHeight*0.8];
 
   useEffect(() => {
     const handleResize = () => {
-      setWindowHeight(window.innerHeight);
+      setWindowDimensions([window.innerWidth, window.innerHeight]);
     };
 
     window.addEventListener('resize', handleResize);
@@ -46,7 +46,7 @@ function App() {
         <p>div1</p>
       </UiDiv>
       <GameDiv>
-        <Game gameDimensions={gameDimensions} windowHeight={windowHeight}/>
+        <Game gameDimensions={gameDimensions} windowDimensions={windowDimensions}/>
       </GameDiv>
     </ContainerDiv>
   )

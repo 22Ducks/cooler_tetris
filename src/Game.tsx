@@ -44,7 +44,7 @@ height: 30%;
 
 type GameProps = {
     gameDimensions: number[];
-    windowHeight: number;
+    windowDimensions: number[];
 }
 
 const defaultInterval = {
@@ -58,7 +58,7 @@ export const defaultBlock = {
   centerPoint: [5, 1] as [number, number]
 }
 
-export const Game = ({gameDimensions, windowHeight}: GameProps) => {
+export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
 
     const [gridArr, setGridArr] = useState<string[][]>(new Array(20).fill("").map(() => new Array(10).fill("")));
     const currGridArr = useRef<string[][]>(undefined);
@@ -66,16 +66,6 @@ export const Game = ({gameDimensions, windowHeight}: GameProps) => {
     const [blockData, setBlockData] = useState<BlockDef>(generateUpNext());
     const [upNext, setUpNext] = useState<BlockDef>(generateUpNext());
     const [fallInterval, setFallInterval] = useState(defaultInterval);
-
-    const [upNextDimensions, setUpNextDimensions] = useState([0, 0]);
-
-    useEffect(() => {
-        const nextCanvas = document.getElementById("upNextDisp");
-        
-        if(nextCanvas !== null) {
-            setUpNextDimensions([nextCanvas.clientWidth, nextCanvas.clientWidth]);
-        }
-    }, [windowHeight]);
 
     useEffect(() => {
         currGridArr.current = gridArr;
@@ -186,11 +176,11 @@ export const Game = ({gameDimensions, windowHeight}: GameProps) => {
 
     return (
         <>
-        <GameCanvas gridArr={gridArr} blockData={blockData} gameDimensions={gameDimensions} windowHeight={windowHeight}/>
+        <GameCanvas gridArr={gridArr} blockData={blockData} gameDimensions={gameDimensions} windowDimensions={windowDimensions}/>
         <InfoDiv>
           <UpNextDiv>
-            <UpNextDisplay id="upNextDisp">
-              <UpNextCanvas upNextDimensions={upNextDimensions} upNext={upNext}/>
+            <UpNextDisplay>
+              <UpNextCanvas windowDimensions={windowDimensions} upNext={upNext}/>
             </UpNextDisplay>
             <div>
               <p>fancy up next text here</p>
