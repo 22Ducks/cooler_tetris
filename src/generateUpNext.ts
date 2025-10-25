@@ -1,6 +1,6 @@
 import type { BlockDef } from "./blockControl"
-import { defaultBlock } from "./App"
 import { shapeList } from "./constants"
+import { defaultBlock } from "./Game";
 
 export const generateUpNext = () => {
     const randomIndex = Math.floor(Math.random() * shapeList.length);

@@ -1,4 +1,7 @@
 import styled from "styled-components"
+import type { BlockDef } from "./blockControl";
+import { useEffect, useRef } from "react";
+import { drawCanvas } from "./drawCanvas";
 
 const StyleGameCanvas = styled.canvas `
 align-self: flex-start;
@@ -8,11 +11,18 @@ margin-top: 5vh;
 `
 
 type GameCanvasProps = {
-    canvasRef: React.RefObject<HTMLCanvasElement | null>;
-    width: number;
-    height: number;
+    gridArr: string[][];
+    blockData: BlockDef;
+    gameDimensions: number[];
+    windowDimensions: number[];
 }
 
-export const GameCanvas = ({canvasRef, width, height}: GameCanvasProps) => {
-    return <StyleGameCanvas ref={canvasRef} width={width} height={height}></StyleGameCanvas>
+export const GameCanvas = ({gridArr, blockData, gameDimensions, windowDimensions}: GameCanvasProps) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+
+    useEffect(() => {
+        drawCanvas(gridArr, blockData, gameDimensions, canvasRef);
+    }, [windowDimensions, gridArr, blockData]);
+    
+    return <StyleGameCanvas ref={canvasRef} width={gameDimensions[0]} height={gameDimensions[1]}></StyleGameCanvas>
 }

@@ -16,6 +16,9 @@ export const drawCanvas = (gridArr: string[][], blockData: BlockDef, gameDimensi
         const cellWidth = boardWidth / 10;
         const cellHeight = boardHeight / 20;
 
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.beginPath();
+
         gridArr.forEach((row, y) => {
           row.forEach((item, x) => {
             if(item === "[x]") {
@@ -46,6 +49,8 @@ export const drawCanvas = (gridArr: string[][], blockData: BlockDef, gameDimensi
 
         ctx.strokeStyle = "#aaaaaaff";
         ctx.stroke();
+
+        ctx.closePath();
       }
     }
 

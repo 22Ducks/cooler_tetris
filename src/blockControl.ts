@@ -56,11 +56,6 @@ export const calcBlockMovement = (event: string, gridArr: string[][], blockDef: 
 
   }
   
-  if(event === "ArrowDown") {
-    //deal with later
-    return blockDef;
-  }
-  
   if(event.toLowerCase() === "z" || event.toLowerCase() === "x") { //prevent out-of-bounds
 
     if(shape === "O") {
