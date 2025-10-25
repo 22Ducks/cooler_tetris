@@ -16,8 +16,6 @@ export const rotationCheck = (gridArr: string[][], centerPoint: number[], curren
     const offsets = innerOffsets(currentShape);
 
     let returnVal: number[] = [999, 999];
-
-    window.srsChecks = srsChecks;
     
     srsChecks.some((shift) => {
         if(centerPoint[0] + offsets[0] + shift[0] >= 0 && centerPoint[0] + offsets[1] + shift[0] <= 10) { //not out-of-bounds
@@ -26,9 +24,6 @@ export const rotationCheck = (gridArr: string[][], centerPoint: number[], curren
                 return row.some((item, xIndex) => {
                     const y = centerPoint[1] + yIndex + offsetTop + shift[1];
                     const x = centerPoint[0] + xIndex + offsetLeft + shift[0];
-                    window.x = x;
-                    window.y = y;
-                    window.shift = shift;
                     if(y < 0) {
                         return false;
                     }

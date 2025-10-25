@@ -174,6 +174,33 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
         };
     }, [gridArr, blockData]);
 
+    useEffect(() => {
+        const {shape, rotation, centerPoint} = blockData;
+        const currentShape = shapeChart[shape][rotation];
+
+        const {offsetTop, offsetLeft} = outerOffsets(currentShape);
+
+        const isInvalid = currentShape.some((row, yIndex) => {
+            return row.some((item, xIndex) => {
+                const y = centerPoint[1] + yIndex + offsetTop;
+                const x = centerPoint[0] + xIndex + offsetLeft;
+                if(y < 0) {
+                    return false;
+                }
+                if(y > 19 || (gridArr[y][x] === "[x]" && item !== "")) {
+                    return true;
+                }
+            });
+        });
+
+        if(isInvalid) {
+            //code for game over here
+            //make some way to disable all game-related use effects
+            console.log("GAME OVER");
+            setFallInterval({interval: 0, modifier: 0});
+        }
+    }, [upNext]);
+
     return (
         <>
         <GameCanvas gridArr={gridArr} blockData={blockData} gameDimensions={gameDimensions} windowDimensions={windowDimensions}/>
