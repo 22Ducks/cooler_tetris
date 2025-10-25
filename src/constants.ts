@@ -11,7 +11,8 @@ export enum Shape {
 export const shapeList = Object.values(Shape);
 
 export const shapeChart: Record<Shape, string[][][]> = {
-    O: [[["", "o", "o", ""],
+    O: [[["", "", "", ""],
+            ["", "o", "o", ""],
             ["", "o", "o", ""],
             ["", "", "", ""]]],
         
@@ -97,10 +98,6 @@ export const shapeChart: Record<Shape, string[][][]> = {
             ["o", "o", ""],
             ["", "o", ""]]],
 };
-
-type Shift = [number, number];
-type ShiftOptions = [Shift, Shift, Shift, Shift, Shift];
-type ShiftOptionTuple = [ShiftOptions, ShiftOptions];
 
 type ShapeType = Record<Shape, string>;
 type RotateableShapes = keyof Omit<ShapeType, Shape.O>;
