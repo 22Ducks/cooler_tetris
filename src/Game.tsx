@@ -1,12 +1,13 @@
 import styled from "styled-components"
 import { GameCanvas } from "./GameCanvas"
-import { useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { calcBlockMovement, quickDrop, type BlockDef } from "./blockControl"
 import { generateUpNext } from "./generateUpNext"
 import { canFall } from "./canFall"
 import { Shape, shapeChart } from "./constants"
 import { outerOffsets } from "./outerOffsets"
 import { UpNextCanvas } from "./UpNextCanvas"
+import { PauseContext } from "./App"
 
 const InfoDiv = styled.div `
 display: flex;
@@ -60,6 +61,8 @@ export const defaultBlock = {
 
 export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
 
+    const {paused, setPaused} = useContext(PauseContext);
+
     const [gridArr, setGridArr] = useState<string[][]>(new Array(20).fill("").map(() => new Array(10).fill("")));
     const currGridArr = useRef<string[][]>(undefined);
 
@@ -73,6 +76,10 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
 
     useEffect(() => {
         const lowerBlock = () => {
+            if(paused) {
+                return;
+            }
+
             setBlockData(prevData => {
             if(!currGridArr.current) {
                 return prevData;
@@ -93,7 +100,7 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
         return () => {
             clearInterval(intervalId);
         };
-    }, [fallInterval]);
+    }, [fallInterval, paused]);
 
     useEffect(() => {
         const {shape, rotation, centerPoint, placed} = blockData;
@@ -138,6 +145,10 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
     }, [blockData]);
     
     useEffect(() => {    
+        if(paused) {
+            return;
+        }
+
         const handleKeyDown = (event: KeyboardEvent) => {
             if(event.key === " ") {
                 const newData = quickDrop(gridArr, blockData);
@@ -172,9 +183,9 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
             document.removeEventListener('keydown', handleKeyDown);
             document.removeEventListener('keyup', handleKeyUp);
         };
-    }, [gridArr, blockData]);
+    }, [gridArr, blockData, paused]);
 
-    useEffect(() => {
+    useEffect(() => { //checking for Loss
         const {shape, rotation, centerPoint} = blockData;
         const currentShape = shapeChart[shape][rotation];
 
@@ -197,7 +208,7 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
             //code for game over here
             //make some way to disable all game-related use effects
             console.log("GAME OVER");
-            setFallInterval({interval: 0, modifier: 0});
+            setPaused(true);
         }
     }, [upNext]);
 
