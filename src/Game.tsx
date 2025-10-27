@@ -8,6 +8,7 @@ import { Shape, shapeChart } from "./constants"
 import { outerOffsets } from "./outerOffsets"
 import { UpNextCanvas } from "./UpNextCanvas"
 import { PauseContext } from "./App"
+import { GameOverModal } from "./GameOverModal"
 
 const InfoDiv = styled.div `
 display: flex;
@@ -62,6 +63,7 @@ export const defaultBlock = {
 export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
 
     const {paused, setPaused} = useContext(PauseContext);
+    const [isGameOver, setGameOver] = useState(false);
 
     const [gridArr, setGridArr] = useState<string[][]>(new Array(20).fill("").map(() => new Array(10).fill("")));
     const currGridArr = useRef<string[][]>(undefined);
@@ -209,11 +211,22 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
             //make some way to disable all game-related use effects
             console.log("GAME OVER");
             setPaused(true);
+            setGameOver(true);
         }
     }, [upNext]);
 
+    const restart = () => {
+        setPaused(false);
+        setGridArr(new Array(20).fill("").map(() => new Array(10).fill("")));
+        setBlockData(generateUpNext());
+        setUpNext(generateUpNext());
+        setFallInterval(defaultInterval);
+        setGameOver(false);
+    }
+
     return (
         <>
+        <GameOverModal open={isGameOver} restart={restart} />
         <GameCanvas gridArr={gridArr} blockData={blockData} gameDimensions={gameDimensions} windowDimensions={windowDimensions}/>
         <InfoDiv>
           <UpNextDiv>
