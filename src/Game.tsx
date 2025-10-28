@@ -9,6 +9,7 @@ import { outerOffsets } from "./outerOffsets"
 import { UpNextCanvas } from "./UpNextCanvas"
 import { PauseContext } from "./App"
 import { GameOverModal } from "./GameOverModal"
+import { StartMenuModal } from "./StartMenuModal"
 
 const InfoDiv = styled.div `
 display: flex;
@@ -207,8 +208,6 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
         });
 
         if(isInvalid) {
-            //code for game over here
-            //make some way to disable all game-related use effects
             console.log("GAME OVER");
             setPaused(true);
             setGameOver(true);
@@ -227,6 +226,7 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
     return (
         <>
         <GameOverModal open={isGameOver} restart={restart} />
+        <StartMenuModal />
         <GameCanvas gridArr={gridArr} blockData={blockData} gameDimensions={gameDimensions} windowDimensions={windowDimensions}/>
         <InfoDiv>
           <UpNextDiv>

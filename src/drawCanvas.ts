@@ -2,7 +2,7 @@ import type { BlockDef } from "./blockControl";
 import { shapeChart } from "./constants";
 import { outerOffsets } from "./outerOffsets";
 
-export const drawCanvas = (gridArr: string[][], blockData: BlockDef, gameDimensions: number[], canvasRef: React.RefObject<HTMLCanvasElement | null>) => {
+export const drawCanvas = (gridArr: string[][], blockData: BlockDef, gameDimensions: number[], canvasRef: React.RefObject<HTMLCanvasElement | null>, paused: boolean) => {
     const canvas = canvasRef.current;
 
     if (canvas) {
@@ -35,17 +35,19 @@ export const drawCanvas = (gridArr: string[][], blockData: BlockDef, gameDimensi
 
         ctx.fillStyle = "#58aae0ff"
 
-        currentShape.forEach((row, yIndex) => {
-          row.forEach((_item, xIndex) => {
-            const y = centerPoint[1] + yIndex + offsetTop;
-            const x = centerPoint[0] + xIndex + offsetLeft;
-            if(x >= 0 && y >= 0 && currentShape[yIndex][xIndex] !== "") {
-              const rectX = x * boardWidth / 10;
-              const rectY = y * boardHeight / 20;
-              ctx.fillRect(rectX, rectY, cellWidth, cellHeight);
-            }
+        if(!paused) {
+          currentShape.forEach((row, yIndex) => {
+            row.forEach((_item, xIndex) => {
+              const y = centerPoint[1] + yIndex + offsetTop;
+              const x = centerPoint[0] + xIndex + offsetLeft;
+              if(x >= 0 && y >= 0 && currentShape[yIndex][xIndex] !== "") {
+                const rectX = x * boardWidth / 10;
+                const rectY = y * boardHeight / 20;
+                ctx.fillRect(rectX, rectY, cellWidth, cellHeight);
+              }
+            });
           });
-        });
+        }
 
         ctx.strokeStyle = "#aaaaaaff";
         ctx.stroke();

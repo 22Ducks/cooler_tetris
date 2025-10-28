@@ -28,7 +28,7 @@ type PauseContextType = {
 }
 
 const defaultPausedVal: PauseContextType = {
-  paused: false,
+  paused: true,
   setPaused: () => {}
 }
 
@@ -37,7 +37,7 @@ export const PauseContext = createContext<PauseContextType>(defaultPausedVal);
 function App() {
   
   const [windowDimensions, setWindowDimensions] = useState([window.innerWidth, window.innerHeight]);
-  const [paused, setPaused] = useState(false);
+  const [paused, setPaused] = useState(true);
 
   const gameDimensions = [window.innerHeight*0.4, window.innerHeight*0.8];
 

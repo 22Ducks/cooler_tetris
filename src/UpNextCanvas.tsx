@@ -1,7 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import styled from "styled-components"
 import type { BlockDef } from "./blockControl";
 import { shapeChart } from "./constants";
+import { PauseContext } from "./App";
 
 const StyleNextCanvas = styled.canvas `
 width: 100%;
@@ -13,19 +14,22 @@ type UpNextProps = {
     upNext: BlockDef;
 }
 
-export const UpNextCanvas = ({windowDimensions, upNext}: UpNextProps) => { //incorrect dimensions?
+export const UpNextCanvas = ({windowDimensions, upNext}: UpNextProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const canvas = canvasRef.current;
     const currentShape = shapeChart[upNext.shape][upNext.rotation];
 
+    const {paused} = useContext(PauseContext);
+    
     useEffect(() => {
         if (canvas) {
             const ctx = canvas.getContext('2d');
-
+            
             const cellWidth = canvas.width / currentShape[0].length;
             const cellHeight = canvas.height / currentShape.length;
-
+            
             if(ctx) {
+                console.log("Up next draw");
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.beginPath();
                 currentShape.forEach((row, y) => {
@@ -49,7 +53,7 @@ export const UpNextCanvas = ({windowDimensions, upNext}: UpNextProps) => { //inc
                 ctx.closePath();
             }
         }
-    }, [windowDimensions, upNext]);
+    }, [windowDimensions, upNext, paused]);
 
     return <StyleNextCanvas ref={canvasRef} />
 }
