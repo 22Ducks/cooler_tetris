@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { createContext, useEffect, useState } from 'react'
 import './App.css'
 import styled from 'styled-components'
 import { Game } from './Game'
@@ -22,9 +22,22 @@ width: 50vw;
 border: 1px solid #000000;
 `
 
+type PauseContextType = {
+  paused: boolean;
+  setPaused: (paused: boolean) => void;
+}
+
+const defaultPausedVal: PauseContextType = {
+  paused: true,
+  setPaused: () => {}
+}
+
+export const PauseContext = createContext<PauseContextType>(defaultPausedVal);
+
 function App() {
   
   const [windowDimensions, setWindowDimensions] = useState([window.innerWidth, window.innerHeight]);
+  const [paused, setPaused] = useState(true);
 
   const gameDimensions = [window.innerHeight*0.4, window.innerHeight*0.8];
 
@@ -42,12 +55,14 @@ function App() {
 
   return (
     <ContainerDiv>
-      <UiDiv>
-        <p>div1</p>
-      </UiDiv>
-      <GameDiv>
-        <Game gameDimensions={gameDimensions} windowDimensions={windowDimensions}/>
-      </GameDiv>
+      <PauseContext.Provider value = {{paused, setPaused}}>
+        <UiDiv>
+          <p>div1</p>
+        </UiDiv>
+        <GameDiv>
+          <Game gameDimensions={gameDimensions} windowDimensions={windowDimensions}/>
+        </GameDiv>
+      </PauseContext.Provider>
     </ContainerDiv>
   )
 }
