@@ -208,7 +208,6 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
         });
 
         if(isInvalid) {
-            console.log("GAME OVER");
             setPaused(true);
             setGameOver(true);
         }

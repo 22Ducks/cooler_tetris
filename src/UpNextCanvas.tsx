@@ -29,7 +29,6 @@ export const UpNextCanvas = ({windowDimensions, upNext}: UpNextProps) => {
             const cellHeight = canvas.height / currentShape.length;
             
             if(ctx) {
-                console.log("Up next draw");
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.beginPath();
                 currentShape.forEach((row, y) => {
