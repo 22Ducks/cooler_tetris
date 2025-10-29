@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from 'react'
 import './App.css'
 import styled from 'styled-components'
 import { Game } from './Game'
+import { UserInterface } from './UserInterface'
 
 const ContainerDiv = styled.div `
 display: flex;
@@ -57,7 +58,7 @@ function App() {
     <ContainerDiv>
       <PauseContext.Provider value = {{paused, setPaused}}>
         <UiDiv>
-          <p>div1</p>
+          <UserInterface windowDimensions={windowDimensions} paused={paused}/>
         </UiDiv>
         <GameDiv>
           <Game gameDimensions={gameDimensions} windowDimensions={windowDimensions}/>
