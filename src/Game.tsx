@@ -4,7 +4,7 @@ import { useContext, useEffect, useRef, useState } from "react"
 import { calcBlockMovement, quickDrop, type BlockDef } from "./blockControl"
 import { generateUpNext } from "./generateUpNext"
 import { canFall } from "./canFall"
-import { Shape, shapeChart } from "./constants"
+import { lineClearEvent, Shape, shapeChart } from "./constants"
 import { outerOffsets } from "./outerOffsets"
 import { UpNextCanvas } from "./UpNextCanvas"
 import { PauseContext } from "./App"
@@ -131,8 +131,9 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
 
                 changedLines.forEach((yInd) => {
                 if(newGrid[yInd].every(item => item === "[x]")) {
+                    document.dispatchEvent(lineClearEvent);
                     for(let i = yInd; i > 0; i--) {
-                    newGrid[i] = structuredClone(newGrid[i-1]);
+                        newGrid[i] = structuredClone(newGrid[i-1]);
                     }
                 }
             });

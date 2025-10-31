@@ -1,3 +1,5 @@
+import { compose } from "ramda";
+
 export enum Shape {
     O = "O",
     I = "I",
@@ -184,3 +186,8 @@ export const srs_chart: Record<RotateableShapes, number[][][][]> = {
             [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]], [[0, 0], [-1, 0], [-1, 1], [0, -2], [-1, -2]]
         ]],
 };
+
+export const lineClearEvent = new CustomEvent('lineClearEvent', {
+    bubbles: true,
+    composed: true
+});
