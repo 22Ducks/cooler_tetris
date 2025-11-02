@@ -131,11 +131,12 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
 
                 changedLines.forEach((yInd) => {
                 if(newGrid[yInd].every(item => item === "[x]")) {
-                    document.dispatchEvent(lineClearEvent);
                     for(let i = yInd; i > 0; i--) {
                         newGrid[i] = structuredClone(newGrid[i-1]);
                     }
+                    document.dispatchEvent(lineClearEvent);
                 }
+
             });
 
             return newGrid;

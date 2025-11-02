@@ -23,6 +23,7 @@ export const UserInterface = ({windowDimensions, paused}: InterfaceProps) => {
 
     const circleRef = useRef<HTMLDivElement>(null);
     const [circleWidth, setWidth] = useState(0);
+    const [combo, setCombo] = useState(0);
 
     useEffect(() => {
         if(circleRef.current) {
@@ -35,7 +36,7 @@ export const UserInterface = ({windowDimensions, paused}: InterfaceProps) => {
         <>
         <ComboDiv>
             <SpacingDiv />
-                <ComboDisplayDiv circleRef={circleRef} circleWidth={circleWidth}/>
+                <ComboDisplayDiv circleRef={circleRef} circleWidth={circleWidth} combo={combo} setCombo={setCombo}/>
             <SpacingDiv /> 
         </ComboDiv>
         <div>

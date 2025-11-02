@@ -27,9 +27,11 @@ border-radius: 50%;
 type ComboProps = {
     circleRef: React.RefObject<HTMLDivElement | null>;
     circleWidth: number;
+    combo: number;
+    setCombo: React.Dispatch<React.SetStateAction<number>>
 }
 
-export const ComboDisplayDiv = ({circleRef, circleWidth}: ComboProps) => {
+export const ComboDisplayDiv = ({circleRef, circleWidth, combo, setCombo}: ComboProps) => {
     const progressRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -43,10 +45,16 @@ export const ComboDisplayDiv = ({circleRef, circleWidth}: ComboProps) => {
     useEffect(() => {
         const comboUp = () => {
             console.log("CLEAR!");
+            //deferring change of combo to next tick to avoid error of changing one component mid handling another
+            setTimeout(() => {setCombo(prevCombo => prevCombo+1)}, 0); //strict mode may be causing issues here...
         }
 
         document.addEventListener('lineClearEvent', comboUp);
-    }, []);
+
+        return () => {
+            document.removeEventListener('lineClearEvent', comboUp);
+        };
+    }, [combo]);
 
     return (
         <ContainerDiv>
@@ -54,7 +62,7 @@ export const ComboDisplayDiv = ({circleRef, circleWidth}: ComboProps) => {
                 <LinearProgress variant="determinate" value={10} sx={{ height: '100%' }}/>
             </ComboTimeDiv>
             <CircleDiv ref={circleRef}>
-                <p>combo</p>
+                <p>{String(combo)}</p>
             </CircleDiv>
         </ContainerDiv>
     );

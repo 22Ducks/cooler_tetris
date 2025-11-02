@@ -189,5 +189,5 @@ export const srs_chart: Record<RotateableShapes, number[][][][]> = {
 
 export const lineClearEvent = new CustomEvent('lineClearEvent', {
     bubbles: true,
-    composed: true
+    composed: true //research more
 });
