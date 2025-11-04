@@ -4,10 +4,10 @@ import { useContext, useEffect, useRef, useState } from "react"
 import { calcBlockMovement, quickDrop, type BlockDef } from "./blockControl"
 import { generateUpNext } from "./generateUpNext"
 import { canFall } from "./canFall"
-import { lineClearEvent, Shape, shapeChart } from "./constants"
+import { Shape, shapeChart } from "./constants"
 import { outerOffsets } from "./outerOffsets"
 import { UpNextCanvas } from "./UpNextCanvas"
-import { PauseContext } from "./App"
+import { LineClearContext, PauseContext } from "./App"
 import { GameOverModal } from "./GameOverModal"
 import { StartMenuModal } from "./StartMenuModal"
 
@@ -64,6 +64,8 @@ export const defaultBlock = {
 export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
 
     const {paused, setPaused} = useContext(PauseContext);
+    const lineClearBus = useContext(LineClearContext);
+
     const [isGameOver, setGameOver] = useState(false);
 
     const [gridArr, setGridArr] = useState<string[][]>(new Array(20).fill("").map(() => new Array(10).fill("")));
@@ -129,15 +131,21 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
                     });
                 });
 
-                changedLines.forEach((yInd) => {
-                if(newGrid[yInd].every(item => item === "[x]")) {
-                    for(let i = yInd; i > 0; i--) {
-                        newGrid[i] = structuredClone(newGrid[i-1]);
-                    }
-                    document.dispatchEvent(lineClearEvent);
-                }
+                let numCleared = 0;
 
-            });
+                changedLines.forEach((yInd) => {
+                    if(newGrid[yInd].every(item => item === "[x]")) {
+                        for(let i = yInd; i > 0; i--) {
+                            newGrid[i] = structuredClone(newGrid[i-1]);
+                        }
+                        numCleared++;
+                        //document.dispatchEvent(lineClearEvent);
+                    }
+                });
+
+                if(numCleared > 0) {
+                    lineClearBus.publish(numCleared);
+                }
 
             return newGrid;
         });
@@ -222,6 +230,7 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
         setUpNext(generateUpNext());
         setFallInterval(defaultInterval);
         setGameOver(false);
+        lineClearBus.publish(-1);
     }
 
     return (

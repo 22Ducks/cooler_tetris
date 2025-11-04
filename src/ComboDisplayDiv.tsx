@@ -1,6 +1,7 @@
 import styled from "styled-components"
 import { LinearProgress } from "@mui/material";
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
+import { LineClearContext } from "./App";
 
 const ComboTimeDiv = styled.div `
 position: absolute;
@@ -33,6 +34,7 @@ type ComboProps = {
 
 export const ComboDisplayDiv = ({circleRef, circleWidth, combo, setCombo}: ComboProps) => {
     const progressRef = useRef<HTMLDivElement>(null);
+    const lineClearBus = useContext(LineClearContext);
 
     useEffect(() => {
         console.log({circleWidth});
@@ -43,16 +45,22 @@ export const ComboDisplayDiv = ({circleRef, circleWidth, combo, setCombo}: Combo
     }, [circleRef, circleWidth]);
 
     useEffect(() => {
-        const comboUp = () => {
-            console.log("CLEAR!");
-            //deferring change of combo to next tick to avoid error of changing one component mid handling another
-            setTimeout(() => {setCombo(prevCombo => prevCombo+1)}, 0); //strict mode may be causing issues here...
+        const comboUp = (linesCleared: number) => {
+            if(linesCleared === -1) {
+                setTimeout(() => {setCombo(0)}, 0);
+                return;
+            }
+            //timeout defers process to the next tick so this doesn't try to run mid render of Game
+            setTimeout(() => {setCombo(combo+linesCleared)}, 0);
         }
 
-        document.addEventListener('lineClearEvent', comboUp);
+        const unsubscribe = lineClearBus.subscribe(comboUp);
+
+        // document.addEventListener('lineClearEvent', comboUp);
 
         return () => {
-            document.removeEventListener('lineClearEvent', comboUp);
+            unsubscribe();
+        //     document.removeEventListener('lineClearEvent', comboUp);
         };
     }, [combo]);
 

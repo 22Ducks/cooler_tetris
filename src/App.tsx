@@ -3,6 +3,7 @@ import './App.css'
 import styled from 'styled-components'
 import { Game } from './Game'
 import { UserInterface } from './UserInterface'
+import { createLineClearSubscription } from './eventSubscription'
 
 const ContainerDiv = styled.div `
 display: flex;
@@ -33,7 +34,10 @@ const defaultPausedVal: PauseContextType = {
   setPaused: () => {}
 }
 
+const lineClearBus = createLineClearSubscription();
+
 export const PauseContext = createContext<PauseContextType>(defaultPausedVal);
+export const LineClearContext = createContext(lineClearBus);
 
 function App() {
   
@@ -56,6 +60,7 @@ function App() {
 
   return (
     <ContainerDiv>
+      <LineClearContext.Provider value = {lineClearBus}>
       <PauseContext.Provider value = {{paused, setPaused}}>
         <UiDiv>
           <UserInterface windowDimensions={windowDimensions} paused={paused}/>
@@ -64,6 +69,7 @@ function App() {
           <Game gameDimensions={gameDimensions} windowDimensions={windowDimensions}/>
         </GameDiv>
       </PauseContext.Provider>
+      </LineClearContext.Provider>
     </ContainerDiv>
   )
 }
