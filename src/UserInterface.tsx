@@ -28,7 +28,6 @@ export const UserInterface = ({windowDimensions, paused}: InterfaceProps) => {
     useEffect(() => {
         if(circleRef.current) {
             setWidth(circleRef.current.offsetWidth);
-            console.log(circleWidth);
         }
     }, [windowDimensions, circleRef.current]);
 
