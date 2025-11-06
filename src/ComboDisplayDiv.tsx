@@ -30,9 +30,11 @@ type ComboProps = {
     circleWidth: number;
     combo: number;
     setCombo: React.Dispatch<React.SetStateAction<number>>
+    score: number;
+    setScore: React.Dispatch<React.SetStateAction<number>>
 }
 
-export const ComboDisplayDiv = ({circleRef, circleWidth, combo, setCombo}: ComboProps) => {
+export const ComboDisplayDiv = ({circleRef, circleWidth, combo, setCombo, score, setScore}: ComboProps) => {
     const progressRef = useRef<HTMLDivElement>(null);
     const lineClearBus = useContext(LineClearContext);
 
@@ -50,10 +52,14 @@ export const ComboDisplayDiv = ({circleRef, circleWidth, combo, setCombo}: Combo
             if(linesCleared === -1) {
                 setTimeout(() => {setCombo(0)}, 0);
                 setComboTimer(0);
+                setScore(0);
                 return;
             }
             //timeout defers process to the next tick so this doesn't try to run mid render of Game
             setTimeout(() => {setCombo(combo+linesCleared)}, 0);
+            setTimeout(() => {setScore(score+100*(1+(combo*0.1))*linesCleared)}, 0);
+            console.log({score, combo, linesCleared});
+            console.log("Added score: ", 100*(1+(combo*0.1))*linesCleared);
         }
 
         let comboIntervalId = -1;
@@ -76,7 +82,7 @@ export const ComboDisplayDiv = ({circleRef, circleWidth, combo, setCombo}: Combo
             unsubscribe();
         //     document.removeEventListener('lineClearEvent', comboUp);
         };
-    }, [combo]);
+    }, [combo, score]);
 
     useEffect(() => {
         if(comboTimer <= 0) {

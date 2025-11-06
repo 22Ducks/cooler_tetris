@@ -15,6 +15,19 @@ border-bottom: 1px solid #000000;
 overflow: hidden;
 `
 
+const StoreDiv = styled.div `
+display: flex;
+flex-direction: column;
+height: 60%;
+border-bottom: 1px solid #000000;
+`
+
+const ScoreDiv = styled.div `
+display: flex;
+flex-direction: column;
+height: 20%;
+`
+
 const SpacingDiv = styled.div `
 height: 10%;
 `
@@ -24,6 +37,7 @@ export const UserInterface = ({windowDimensions, paused}: InterfaceProps) => {
     const circleRef = useRef<HTMLDivElement>(null);
     const [circleWidth, setWidth] = useState(0);
     const [combo, setCombo] = useState(0);
+    const [score, setScore] = useState(0);
 
     useEffect(() => {
         if(circleRef.current) {
@@ -35,15 +49,15 @@ export const UserInterface = ({windowDimensions, paused}: InterfaceProps) => {
         <>
         <ComboDiv>
             <SpacingDiv />
-                <ComboDisplayDiv circleRef={circleRef} circleWidth={circleWidth} combo={combo} setCombo={setCombo}/>
+                <ComboDisplayDiv circleRef={circleRef} circleWidth={circleWidth} combo={combo} setCombo={setCombo} score={score} setScore={setScore}/>
             <SpacingDiv /> 
         </ComboDiv>
-        <div>
+        <StoreDiv>
             <p>shop</p>
-        </div>
-        <div>
-            <p>score</p>
-        </div>
+        </StoreDiv>
+        <ScoreDiv>
+            <p>{String(score)}</p>
+        </ScoreDiv>
         </>
     );
 }
