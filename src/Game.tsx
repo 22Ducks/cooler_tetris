@@ -58,7 +58,8 @@ const defaultInterval = {
 export const defaultBlock = {
   shape: Shape.T,
   rotation: 0,
-  centerPoint: [5, 1] as [number, number]
+  centerPoint: [5, 1] as [number, number],
+  placed: false
 }
 
 export const Game = ({gameDimensions, windowDimensions}: GameProps) => {

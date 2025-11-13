@@ -26,5 +26,5 @@ export const GameCanvas = ({gridArr, blockData, gameDimensions, windowDimensions
         drawCanvas(gridArr, blockData, gameDimensions, canvasRef, paused);
     }, [windowDimensions, gridArr, blockData, paused]);
     
-    return <StyleGameCanvas ref={canvasRef} width={gameDimensions[0]} height={gameDimensions[1]}></StyleGameCanvas>
+    return <StyleGameCanvas data-testid="gamecanvas" ref={canvasRef} width={gameDimensions[0]} height={gameDimensions[1]}></StyleGameCanvas>
 }
