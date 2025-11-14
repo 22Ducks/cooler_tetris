@@ -1,9 +1,9 @@
-import { createContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import styled from 'styled-components'
 import { Game } from './Game'
 import { UserInterface } from './UserInterface'
-import { createLineClearSubscription } from './eventSubscription'
+import { lineClearBus, LineClearContext, PauseContext } from './context'
 
 const ContainerDiv = styled.div `
 display: flex;
@@ -23,21 +23,6 @@ flex-direction: row;
 width: 50vw;
 border: 1px solid #000000;
 `
-
-type PauseContextType = {
-  paused: boolean;
-  setPaused: (paused: boolean) => void;
-}
-
-const defaultPausedVal: PauseContextType = {
-  paused: true,
-  setPaused: () => {}
-}
-
-const lineClearBus = createLineClearSubscription();
-
-export const PauseContext = createContext<PauseContextType>(defaultPausedVal);
-export const LineClearContext = createContext(lineClearBus);
 
 function App() {
   

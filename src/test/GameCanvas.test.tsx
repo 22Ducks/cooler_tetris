@@ -3,7 +3,7 @@ import { GameCanvas } from "../GameCanvas";
 import { render } from "@testing-library/react";
 import { defaultBlock } from "../Game";
 
-document = {} as any;
+//document = {} as any;
 
 describe("GameCanvas", () => {
     it("renders", () => {

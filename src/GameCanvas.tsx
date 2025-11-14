@@ -2,7 +2,7 @@ import styled from "styled-components"
 import type { BlockDef } from "./blockControl";
 import { useContext, useEffect, useRef } from "react";
 import { drawCanvas } from "./drawCanvas";
-import { PauseContext } from "./App";
+import { PauseContext } from "./context";
 
 const StyleGameCanvas = styled.canvas `
 align-self: flex-start;

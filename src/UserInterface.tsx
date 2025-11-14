@@ -34,22 +34,16 @@ height: 10%;
 
 export const UserInterface = ({windowDimensions, paused}: InterfaceProps) => {
 
-    const circleRef = useRef<HTMLDivElement>(null);
-    const [circleWidth, setWidth] = useState(0);
     const [combo, setCombo] = useState(0);
     const [score, setScore] = useState(0);
 
-    useEffect(() => {
-        if(circleRef.current) {
-            setWidth(circleRef.current.offsetWidth);
-        }
-    }, [windowDimensions, circleRef.current]);
+    console.log(paused);
 
     return (
         <>
         <ComboDiv>
             <SpacingDiv />
-                <ComboDisplayDiv circleRef={circleRef} circleWidth={circleWidth} combo={combo} setCombo={setCombo} score={score} setScore={setScore}/>
+                <ComboDisplayDiv combo={combo} setCombo={setCombo} score={score} setScore={setScore}/>
             <SpacingDiv /> 
         </ComboDiv>
         <StoreDiv>
