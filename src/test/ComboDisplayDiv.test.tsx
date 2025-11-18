@@ -1,16 +1,28 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { ComboDisplayDiv } from "../ComboDisplayDiv";
-import { render } from "@testing-library/react";
+import { cleanup, render } from "@testing-library/react";
+import { lineClearBus } from "../context";
+
+afterEach(cleanup);
 
 describe("ComboDisplayDiv", () => {
     it("renders", () => {
-        const { getByTestId } = render(<ComboDisplayDiv combo={0} setCombo={vi.fn()} score={0} setScore={vi.fn()} />);
+        const { getByTestId } = render(<ComboDisplayDiv combo={0} comboTimer={0}/>);
         expect(getByTestId("comboDisp")).not.toBeNull();
     });
 
-    // ---TODO---
-    // check if subscribes
-    // spy on comboUp to see if it runs when linescleared changes
-    // spy on setCombo and setScore
-    // check if it updates when combo or score changes
+    it("displays the correct combo and time", () => {
+        const { getByTestId, rerender } = render(<ComboDisplayDiv combo={0} comboTimer={0}/>);
+        expect(getByTestId("comboText").textContent).toBe("0");
+        expect(getByTestId("progress").ariaValueNow).toBe('0');
+
+        rerender(<ComboDisplayDiv combo={22} comboTimer={10}/>);
+        expect(getByTestId("comboText").textContent).toBe("22");
+        expect(getByTestId("progress").ariaValueNow).toBe('10');
+    });
+
+    it("resets combo when timer runs out", () => {
+        vi.useFakeTimers();
+        lineClearBus.publish(1);
+    });
 });

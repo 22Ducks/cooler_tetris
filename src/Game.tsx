@@ -7,7 +7,7 @@ import { canFall } from "./canFall"
 import { Shape, shapeChart } from "./constants"
 import { outerOffsets } from "./outerOffsets"
 import { UpNextCanvas } from "./UpNextCanvas"
-import { LineClearContext } from "./context"
+import { LineClearContext, useLineClearContext } from "./context"
 import { PauseContext } from "./context"
 import { GameOverModal } from "./GameOverModal"
 import { StartMenuModal } from "./StartMenuModal"
@@ -66,7 +66,7 @@ export const defaultBlock = {
 export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
 
     const {paused, setPaused} = useContext(PauseContext);
-    const lineClearBus = useContext(LineClearContext);
+    const lineClearBus = useLineClearContext();
 
     const [isGameOver, setGameOver] = useState(false);
 

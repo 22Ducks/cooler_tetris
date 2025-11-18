@@ -1,7 +1,5 @@
 import styled from "styled-components"
 import { LinearProgress } from "@mui/material";
-import { useContext, useEffect, useRef, useState } from "react";
-import { LineClearContext } from "./context";
 
 const ComboTimeDiv = styled.div `
 border: 1px solid #000000;
@@ -27,65 +25,18 @@ border-radius: 50%;
 
 type ComboProps = {
     combo: number;
-    setCombo: React.Dispatch<React.SetStateAction<number>>
-    score: number;
-    setScore: React.Dispatch<React.SetStateAction<number>>
+    comboTimer: number;
 }
 
-export const ComboDisplayDiv = ({combo, setCombo, score, setScore}: ComboProps) => {
-    const progressRef = useRef<HTMLDivElement>(null);
-    const lineClearBus = useContext(LineClearContext);
-
-    const [comboTimer, setComboTimer] = useState(0);
-
-    useEffect(() => { 
-        const comboUp = (linesCleared: number) => {
-            if(linesCleared === -1) {
-                setTimeout(() => {setCombo(0)}, 0);
-                setComboTimer(0);
-                setScore(0);
-                return;
-            }
-            //timeout defers process to the next tick so this doesn't try to run mid render of Game
-            setTimeout(() => {setCombo(combo+linesCleared)}, 0);
-            setTimeout(() => {setScore(score+100*(1+(combo*0.1))*linesCleared)}, 0);
-        }
-
-        let comboIntervalId = -1;
-
-        if(combo > 0) {
-            setComboTimer(100);
-            comboIntervalId = setInterval(() => {
-                setComboTimer(prevTimer => prevTimer-1);
-            }, 50);
-        }
-        
-        const unsubscribe = lineClearBus.subscribe(comboUp);
-
-        // document.addEventListener('lineClearEvent', comboUp);
-
-        return () => {
-            if(comboIntervalId !== -1) {
-                clearInterval(comboIntervalId);
-            }
-            unsubscribe();
-        //     document.removeEventListener('lineClearEvent', comboUp);
-        };
-    }, [combo, score]);
-
-    useEffect(() => {
-        if(comboTimer <= 0) {
-            setCombo(0);
-        }
-    }, [comboTimer]);
+export const ComboDisplayDiv = ({combo, comboTimer}: ComboProps) => {
 
     return (
         <ContainerDiv data-testid="comboDisp">
             <CircleDiv>
-                <p>{String(combo)}</p>
+                <p data-testid="comboText">{String(combo)}</p>
             </CircleDiv>
-            <ComboTimeDiv ref={progressRef}>
-                <LinearProgress variant="determinate" value={comboTimer} sx={{ height: '100%', "& .MuiLinearProgress-bar": {transition: 10}} }/>
+            <ComboTimeDiv>
+                <LinearProgress data-testid="progress" variant="determinate" value={comboTimer} sx={{ height: '100%', "& .MuiLinearProgress-bar": {transition: 10}} }/>
             </ComboTimeDiv>
         </ContainerDiv>
     );

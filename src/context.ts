@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 import { createLineClearSubscription } from "./eventSubscription";
 
 type PauseContextType = {
@@ -16,3 +16,4 @@ export const lineClearBus = createLineClearSubscription();
 export const PauseContext = createContext<PauseContextType>(defaultPausedVal);
 
 export const LineClearContext = createContext(lineClearBus);
+export const useLineClearContext = () => useContext(LineClearContext);
