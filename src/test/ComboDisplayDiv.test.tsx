@@ -21,8 +21,4 @@ describe("ComboDisplayDiv", () => {
         expect(getByTestId("progress").ariaValueNow).toBe('10');
     });
 
-    it("resets combo when timer runs out", () => {
-        vi.useFakeTimers();
-        lineClearBus.publish(1);
-    });
 });
