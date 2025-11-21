@@ -22,10 +22,11 @@ export const GameOverModal = ({open, restart}: GameOverProps) => {
     return (
         <Modal
             open={open}
+            data-testid="gameOver"
         >
             <Box sx={modalStyle}>
                 <h3>GAME OVER</h3>
-                <button onClick={restart}>Play Again?</button>
+                <button data-testid="playAgain" onClick={restart}>Play Again?</button>
             </Box>
         </Modal>
     );

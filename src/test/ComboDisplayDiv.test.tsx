@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ComboDisplayDiv } from "../ComboDisplayDiv";
 import { cleanup, render } from "@testing-library/react";
-import { lineClearBus } from "../context";
 
 afterEach(cleanup);
 

@@ -27,10 +27,11 @@ export const StartMenuModal = () => {
     return (
         <Modal
             open={open}
+            data-testid="menu"
         >
             <Box sx={modalStyle}>
                 <h3>Tetris++</h3>
-                <button onClick={start}>Start!</button>
+                <button data-testid="startButton" onClick={start}>Start!</button>
             </Box>
         </Modal>
     );
