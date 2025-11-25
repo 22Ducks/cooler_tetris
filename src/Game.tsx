@@ -88,14 +88,14 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
             }
 
             setBlockData(prevData => {
-            if(!currGridArr.current) {
-                return prevData;
-            }
-            if(canFall(prevData, currGridArr.current)) {
-                return {...prevData, centerPoint: [prevData.centerPoint[0], prevData.centerPoint[1]+1]};
-            }
+                if(!currGridArr.current) {
+                    return prevData;
+                }
+                if(canFall(prevData, currGridArr.current)) {
+                    return {...prevData, centerPoint: [prevData.centerPoint[0], prevData.centerPoint[1]+1]};
+                }
 
-            return {...prevData, placed: true};
+                return {...prevData, placed: true};
             });
         }
 
