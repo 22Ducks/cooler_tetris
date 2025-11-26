@@ -2,7 +2,7 @@ import styled from "styled-components"
 import type { BlockDef } from "./blockControl";
 import { useContext, useEffect, useRef } from "react";
 import { drawCanvas } from "./drawCanvas";
-import { PauseContext } from "./context";
+import { PauseContext, usePauseContext } from "./context";
 
 const StyleGameCanvas = styled.canvas `
 align-self: flex-start;
@@ -20,7 +20,7 @@ type GameCanvasProps = {
 
 export const GameCanvas = ({gridArr, blockData, gameDimensions, windowDimensions}: GameCanvasProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const {paused} = useContext(PauseContext);
+    const {paused} = usePauseContext();
 
     useEffect(() => {
         drawCanvas(gridArr, blockData, gameDimensions, canvasRef, paused);

@@ -1,6 +1,6 @@
 import { Box, Modal } from "@mui/material"
 import { useContext, useState } from "react"
-import { PauseContext } from "./context";
+import { PauseContext, usePauseContext } from "./context";
 
 const modalStyle = {
     position: 'absolute',
@@ -17,7 +17,7 @@ const modalStyle = {
 
 export const StartMenuModal = () => {
     const [open, setOpen] = useState(true);
-    const {setPaused} = useContext(PauseContext);
+    const {setPaused} = usePauseContext();
 
     const start = () => {
         setPaused(false);

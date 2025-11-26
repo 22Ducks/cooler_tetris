@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef } from "react";
 import styled from "styled-components"
 import type { BlockDef } from "./blockControl";
 import { shapeChart } from "./constants";
-import { PauseContext } from "./context";
+import { PauseContext, usePauseContext } from "./context";
 
 const StyleNextCanvas = styled.canvas `
 width: 100%;
@@ -19,7 +19,7 @@ export const UpNextCanvas = ({windowDimensions, upNext}: UpNextProps) => {
     const canvas = canvasRef.current;
     const currentShape = shapeChart[upNext.shape][upNext.rotation];
 
-    const {paused} = useContext(PauseContext);
+    const {paused} = usePauseContext();
     
     useEffect(() => {
         if (canvas) {

@@ -14,6 +14,7 @@ const defaultPausedVal: PauseContextType = {
 export const lineClearBus = createLineClearSubscription();
 
 export const PauseContext = createContext<PauseContextType>(defaultPausedVal);
+export const usePauseContext = () => useContext(PauseContext);
 
 export const LineClearContext = createContext(lineClearBus);
 export const useLineClearContext = () => useContext(LineClearContext);
