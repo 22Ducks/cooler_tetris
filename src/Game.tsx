@@ -1,13 +1,13 @@
 import styled from "styled-components"
 import { GameCanvas } from "./GameCanvas"
-import { useContext, useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { calcBlockMovement, quickDrop, type BlockDef } from "./blockControl"
 import { generateUpNext } from "./generateUpNext"
 import { canFall } from "./canFall"
-import { Shape, shapeChart } from "./constants"
+import { defaultGridArr, Shape, shapeChart } from "./constants"
 import { outerOffsets } from "./outerOffsets"
 import { UpNextCanvas } from "./UpNextCanvas"
-import { LineClearContext, PauseContext } from "./App"
+import { useLineClearContext, usePauseContext } from "./context"
 import { GameOverModal } from "./GameOverModal"
 import { StartMenuModal } from "./StartMenuModal"
 
@@ -58,17 +58,18 @@ const defaultInterval = {
 export const defaultBlock = {
   shape: Shape.T,
   rotation: 0,
-  centerPoint: [5, 1] as [number, number]
+  centerPoint: [5, 1] as [number, number],
+  placed: false
 }
 
 export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
 
-    const {paused, setPaused} = useContext(PauseContext);
-    const lineClearBus = useContext(LineClearContext);
+    const {paused, setPaused} = usePauseContext();
+    const lineClearBus = useLineClearContext();
 
     const [isGameOver, setGameOver] = useState(false);
 
-    const [gridArr, setGridArr] = useState<string[][]>(new Array(20).fill("").map(() => new Array(10).fill("")));
+    const [gridArr, setGridArr] = useState<string[][]>(structuredClone(defaultGridArr));
     const currGridArr = useRef<string[][]>(undefined);
 
     const [blockData, setBlockData] = useState<BlockDef>(generateUpNext());
@@ -86,14 +87,14 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
             }
 
             setBlockData(prevData => {
-            if(!currGridArr.current) {
-                return prevData;
-            }
-            if(canFall(prevData, currGridArr.current)) {
-                return {...prevData, centerPoint: [prevData.centerPoint[0], prevData.centerPoint[1]+1]};
-            }
+                if(!currGridArr.current) {
+                    return prevData;
+                }
+                if(canFall(prevData, currGridArr.current)) {
+                    return {...prevData, centerPoint: [prevData.centerPoint[0], prevData.centerPoint[1]+1]};
+                }
 
-            return {...prevData, placed: true};
+                return {...prevData, placed: true};
             });
         }
 
@@ -225,7 +226,7 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
 
     const restart = () => {
         setPaused(false);
-        setGridArr(new Array(20).fill("").map(() => new Array(10).fill("")));
+        setGridArr(structuredClone(defaultGridArr));
         setBlockData(generateUpNext());
         setUpNext(generateUpNext());
         setFallInterval(defaultInterval);
@@ -238,7 +239,7 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
         <GameOverModal open={isGameOver} restart={restart} />
         <StartMenuModal />
         <GameCanvas gridArr={gridArr} blockData={blockData} gameDimensions={gameDimensions} windowDimensions={windowDimensions}/>
-        <InfoDiv>
+        <InfoDiv data-testid="game">
           <UpNextDiv>
             <UpNextDisplay>
               <UpNextCanvas windowDimensions={windowDimensions} upNext={upNext}/>

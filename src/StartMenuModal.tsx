@@ -1,6 +1,6 @@
 import { Box, Modal } from "@mui/material"
 import { useContext, useState } from "react"
-import { PauseContext } from "./App";
+import { PauseContext, usePauseContext } from "./context";
 
 const modalStyle = {
     position: 'absolute',
@@ -17,7 +17,7 @@ const modalStyle = {
 
 export const StartMenuModal = () => {
     const [open, setOpen] = useState(true);
-    const {setPaused} = useContext(PauseContext);
+    const {setPaused} = usePauseContext();
 
     const start = () => {
         setPaused(false);
@@ -27,10 +27,11 @@ export const StartMenuModal = () => {
     return (
         <Modal
             open={open}
+            data-testid="menu"
         >
             <Box sx={modalStyle}>
                 <h3>Tetris++</h3>
-                <button onClick={start}>Start!</button>
+                <button data-testid="startButton" onClick={start}>Start!</button>
             </Box>
         </Modal>
     );
