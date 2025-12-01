@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { canFall } from "../canFall";
 import { defaultBlock } from "../Game";
+import { defaultGridArr } from "../constants";
 
 describe("canFall", () => {
 
-    const testGrid = new Array(20).fill("").map(() => new Array(10).fill(""));
+    const testGrid = structuredClone(defaultGridArr);
 
     it("returns true if block can move down", () => {
         const isValid = canFall(defaultBlock, testGrid);

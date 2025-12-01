@@ -1,9 +1,9 @@
 import { describe, expect, expectTypeOf, it } from "vitest";
 import { calcBlockMovement, quickDrop, type BlockDef } from "../blockControl";
 import { defaultBlock } from "../Game";
-import { Shape } from "../constants";
+import { defaultGridArr, Shape } from "../constants";
 
-const testGrid = new Array(20).fill("").map(() => new Array(10).fill(""));
+const testGrid = structuredClone(defaultGridArr);
 
 describe("calcBlockMovement", () => {
 
