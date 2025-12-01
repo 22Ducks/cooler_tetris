@@ -1,5 +1,3 @@
-import { compose } from "ramda";
-
 export const defaultGridArr = new Array(20).fill("").map(() => new Array(10).fill(""));
 
 export enum Shape {

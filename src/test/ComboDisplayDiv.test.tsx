@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { ComboDisplayDiv } from "../ComboDisplayDiv";
 import { cleanup, render } from "@testing-library/react";
 
