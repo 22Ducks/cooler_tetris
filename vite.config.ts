@@ -7,5 +7,5 @@ export default defineConfig({
   test: {
     environment: 'jsdom'
   },
-  base: "/cooler-tetris/"
+  base: "/cooler_tetris/"
 })
