@@ -48,7 +48,7 @@ function App() {
       <LineClearContext.Provider value = {lineClearBus}>
       <PauseContext.Provider value = {{paused, setPaused}}>
         <UiDiv>
-          <UserInterface paused={paused}/>
+          <UserInterface/>
         </UiDiv>
         <GameDiv>
           <Game gameDimensions={gameDimensions} windowDimensions={windowDimensions}/>

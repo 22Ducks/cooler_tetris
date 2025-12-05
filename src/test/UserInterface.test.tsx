@@ -7,45 +7,45 @@ describe("ComboDisplayDiv", () => {
     afterEach(cleanup);
 
     it("renders", () => {
-        const { getByTestId } = render(<UserInterface paused={false}/>);
+        const { getByTestId } = render(<UserInterface/>);
         expect(getByTestId("comboDisp")).not.toBeNull();
     });
 
     it("changes score in response to publish calls", () => {
         vi.useFakeTimers();
 
-        const {getByTestId, rerender} = render(<UserInterface paused={false}/>);
+        const {getByTestId, rerender} = render(<UserInterface/>);
         
         //positive increase in score
         Context.lineClearBus.publish(1);
         vi.runOnlyPendingTimers();
 
-        rerender(<UserInterface paused={false}/>);
+        rerender(<UserInterface/>);
         expect(getByTestId("scoreDisp").textContent).toBe('100');
 
         //reset call
         Context.lineClearBus.publish(-1);
         vi.runOnlyPendingTimers();
         
-        rerender(<UserInterface paused={false}/>);
+        rerender(<UserInterface/>);
         expect(getByTestId("scoreDisp").textContent).toBe('0');
     });
 
     it("changes combo and time on publish, resets combo when timer runs out", () => {
-        const { getByTestId, rerender } = render(<UserInterface paused={false}/>);
+        const { getByTestId, rerender } = render(<UserInterface/>);
 
         vi.useFakeTimers();
         Context.lineClearBus.publish(1);
 
         vi.runOnlyPendingTimers();
         
-        rerender(<UserInterface paused={false}/>);
+        rerender(<UserInterface/>);
         expect(getByTestId("comboText").textContent).toBe("1");
         expect(getByTestId("progress").ariaValueNow).toBe("100");
 
         vi.advanceTimersByTime(5000);
 
-        rerender(<UserInterface paused={false}/>);
+        rerender(<UserInterface/>);
         expect(getByTestId("comboText").textContent).toBe('0');
         expect(getByTestId("progress").ariaValueNow).toBe('0');
         
@@ -61,7 +61,7 @@ describe("ComboDisplayDiv", () => {
 
         vi.spyOn(Context, "useLineClearContext").mockReturnValue(mockLineClearContext);
 
-        render(<UserInterface paused={false}/>);
+        render(<UserInterface/>);
         expect(mockLineClearContext.subscribe).toHaveBeenCalledTimes(1);
         expect(unSubSpy).not.toHaveBeenCalled();
 

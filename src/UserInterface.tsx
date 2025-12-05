@@ -3,10 +3,6 @@ import styled from "styled-components";
 import { ComboDisplayDiv } from "./ComboDisplayDiv";
 import { useLineClearContext } from "./context";
 
-type InterfaceProps = {
-    paused: boolean;
-}
-
 const ComboDiv = styled.div `
 display: flex;
 flex-direction: column;
@@ -32,7 +28,7 @@ const SpacingDiv = styled.div `
 height: 10%;
 `
 
-export const UserInterface = ({ paused }: InterfaceProps) => {
+export const UserInterface = () => {
 
     const [combo, setCombo] = useState(0);
     const [score, setScore] = useState(0);
