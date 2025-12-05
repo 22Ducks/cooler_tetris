@@ -1,8 +1,8 @@
-import { useContext, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import styled from "styled-components"
 import type { BlockDef } from "./blockControl";
 import { shapeChart } from "./constants";
-import { PauseContext, usePauseContext } from "./context";
+import { usePauseContext } from "./context";
 
 const StyleNextCanvas = styled.canvas `
 width: 100%;

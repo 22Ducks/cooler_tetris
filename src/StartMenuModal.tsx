@@ -1,6 +1,6 @@
 import { Box, Modal } from "@mui/material"
-import { useContext, useState } from "react"
-import { PauseContext, usePauseContext } from "./context";
+import { useState } from "react"
+import { usePauseContext } from "./context";
 
 const modalStyle = {
     position: 'absolute',
