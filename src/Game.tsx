@@ -157,6 +157,25 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
         setUpNext(newNext);
         }
     }, [blockData]);
+
+    useEffect(() => {
+        const shopClear = () => {
+            console.log("event heard");
+            const newGrid = structuredClone(gridArr);
+
+            for(let i=19; i>0; i--) {
+                newGrid[i] = newGrid[i-1];
+            }
+
+            setGridArr(newGrid);
+        }
+
+        document.addEventListener('shopLineClearEvent', shopClear);
+
+        return () => {
+            document.removeEventListener('shopLineClearEvent', shopClear);
+        }
+    }, [gridArr]);
     
     useEffect(() => {    
         if(paused) {

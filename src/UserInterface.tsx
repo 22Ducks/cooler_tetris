@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { ComboDisplayDiv } from "./ComboDisplayDiv";
 import { useLineClearContext } from "./context";
+import { PointShop } from "./PointShop";
 
 const ComboDiv = styled.div `
 display: flex;
@@ -47,7 +48,7 @@ export const UserInterface = () => {
             }
             //timeout defers process to the next tick so this doesn't try to run mid render of Game
             setTimeout(() => {setCombo(combo+linesCleared)}, 0);
-            setTimeout(() => {setScore(score+100*(1+(combo*0.1))*linesCleared)}, 0);
+            setTimeout(() => {setScore((prevScore) => prevScore+100*(1+(combo*0.1))*linesCleared)}, 0);
         }
 
         let comboIntervalId = -1;
@@ -70,7 +71,7 @@ export const UserInterface = () => {
             unsubscribe();
         //     document.removeEventListener('lineClearEvent', comboUp);
         };
-    }, [combo, score]);
+    }, [combo]);
 
     useEffect(() => {
         if(comboTimer <= 0) {
@@ -86,7 +87,7 @@ export const UserInterface = () => {
             <SpacingDiv /> 
         </ComboDiv>
         <StoreDiv>
-            <p>shop</p>
+            <PointShop score={score} setScore={setScore}/>
         </StoreDiv>
         <ScoreDiv>
             <p data-testid="scoreDisp">{String(score)}</p>

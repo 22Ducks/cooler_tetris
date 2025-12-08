@@ -187,7 +187,11 @@ export const srs_chart: Record<RotateableShapes, number[][][][]> = {
         ]],
 };
 
-// export const lineClearEvent = new CustomEvent('lineClearEvent', {
-//     bubbles: true,
-//     composed: true //research more
-// });
+export const shopContents = [
+    {name: "Clear Line", effect: "Clears the bottom line from the board", cost: 5000},
+]
+
+export const shopLineClearEvent = new CustomEvent('shopClearEvent', {
+    bubbles: true,
+    composed: true //research more
+});
