@@ -160,7 +160,6 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
 
     useEffect(() => {
         const shopClear = () => {
-            console.log("event heard");
             const newGrid = structuredClone(gridArr);
 
             for(let i=19; i>0; i--) {
@@ -170,10 +169,21 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
             setGridArr(newGrid);
         }
 
-        document.addEventListener('shopLineClearEvent', shopClear);
+        const shopI = () => {
+            setBlockData((prevData) => {
+                const newData = prevData;
+                newData.shape = Shape.I;
+                return newData;
+            });
+        }
+
+        document.addEventListener('shopClearEvent', shopClear);
+        document.addEventListener('shopIEvent', shopI);
+
 
         return () => {
-            document.removeEventListener('shopLineClearEvent', shopClear);
+            document.removeEventListener('shopClearEvent', shopClear);
+            document.removeEventListener('shopIEvent', shopI);
         }
     }, [gridArr]);
     

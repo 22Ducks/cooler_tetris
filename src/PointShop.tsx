@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { shopContents, shopLineClearEvent } from "./constants"
+import { shopContents, shopIEvent, shopLineClearEvent } from "./constants"
 
 type ShopProps = {
     score: number,
@@ -30,13 +30,20 @@ flex-direction: column;
 export const PointShop = ({score, setScore}: ShopProps) => {
 
     const shopEventChart = {
-        "Clear Line": shopLineClearEvent
+        "Clear Line": shopLineClearEvent,
+        "I-ify": shopIEvent
     }
 
     const itemBought = (item: string, cost: number, ) => {
         console.log("bought successfully");
         document.dispatchEvent(shopEventChart[item as keyof typeof shopEventChart]); //event not dispatching?
         setScore(score - cost);
+    }
+
+    const handleSpacebar = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (event.key === ' ') { // Check if the pressed key is the spacebar
+            event.preventDefault(); // Prevent the default spacebar action (button activation)
+        }
     }
 
     return (
@@ -51,7 +58,7 @@ export const PointShop = ({score, setScore}: ShopProps) => {
             </ItemEffect>
             <ItemCost>
                 <p>{item.cost}</p>
-                <button disabled={(item.cost > score)} onClick={() => itemBought(item.name, item.cost)}>BUY!</button>
+                <button disabled={(item.cost > score)} onKeyDown={handleSpacebar} onClick={() => itemBought(item.name, item.cost)}>BUY!</button>
             </ItemCost>
         </ShopItem>
     )}
