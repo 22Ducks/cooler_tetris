@@ -188,8 +188,8 @@ export const srs_chart: Record<RotateableShapes, number[][][][]> = {
 };
 
 export const shopContents = [
-    {name: "Clear Line", effect: "Clears the bottom line from the board", cost: 2000},
-    {name: "I-ify", effect: "Transforms current block into an I block", cost: 10000}
+    {name: "Clear Line", effect: "Clears the bottom line from the board", cost: 3000, timesBought: 0},
+    {name: "I-ify", effect: "Transforms next block into an I block", cost: 7500, timesBought: 0}
 ]
 
 export const shopLineClearEvent = new CustomEvent('shopClearEvent', {

@@ -170,8 +170,8 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
         }
 
         const shopI = () => {
-            setBlockData((prevData) => {
-                const newData = prevData;
+            setUpNext(() => {
+                const newData = defaultBlock;
                 newData.shape = Shape.I;
                 return newData;
             });

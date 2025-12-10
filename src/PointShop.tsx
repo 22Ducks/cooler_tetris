@@ -1,5 +1,7 @@
 import styled from "styled-components"
 import { shopContents, shopIEvent, shopLineClearEvent } from "./constants"
+import { Button } from "@mui/material"
+import { useState } from "react"
 
 type ShopProps = {
     score: number,
@@ -11,7 +13,7 @@ display: flex;
 `
 
 const ItemName = styled.div `
-width: 20%;
+width: 15%;
 text-align: center;
 `
 
@@ -21,13 +23,29 @@ text-align: center;
 `
 
 const ItemCost = styled.div `
-width: 20%;
+width: 25%;
 text-align: center;
+align-items: center;
 display: flex;
 flex-direction: column;
 `
 
+const ShopText = styled.div `
+margin-top: 5%;
+`
+
 export const PointShop = ({score, setScore}: ShopProps) => {
+
+    const [shopCostMods, setShopCostMods] = useState(
+        shopContents.reduce((acc, curr) => {
+            acc = {
+                ...acc,
+                [curr.name]: 1
+            }
+
+            return acc;
+        }, {})
+    );
 
     const shopEventChart = {
         "Clear Line": shopLineClearEvent,
@@ -36,6 +54,14 @@ export const PointShop = ({score, setScore}: ShopProps) => {
 
     const itemBought = (item: string, cost: number, ) => {
         console.log("bought successfully");
+        setShopCostMods((currentMods) => {
+            const newMod = {
+                ...currentMods,
+                [item]: currentMods[item as keyof typeof currentMods] + 0.1
+            }
+
+            return newMod;
+        });
         document.dispatchEvent(shopEventChart[item as keyof typeof shopEventChart]); //event not dispatching?
         setScore(score - cost);
     }
@@ -51,14 +77,14 @@ export const PointShop = ({score, setScore}: ShopProps) => {
     {shopContents.map((item, idx) =>
         <ShopItem key={idx}>
             <ItemName>
-                <p>{item.name}</p>
+                <ShopText>{item.name}</ShopText>
             </ItemName>
             <ItemEffect>
-                <p>{item.effect}</p>
+                <ShopText>{item.effect}</ShopText>
             </ItemEffect>
             <ItemCost>
-                <p>{item.cost}</p>
-                <button disabled={(item.cost > score)} onKeyDown={handleSpacebar} onClick={() => itemBought(item.name, item.cost)}>BUY!</button>
+                <ShopText>{Math.floor(item.cost * shopCostMods[item.name as keyof typeof shopCostMods])}</ShopText>
+                <Button variant="outlined" sx={{width: '20%'}} disabled={(item.cost > score)} onKeyDown={handleSpacebar} onClick={() => itemBought(item.name, item.cost)}>BUY!</Button>
             </ItemCost>
         </ShopItem>
     )}
