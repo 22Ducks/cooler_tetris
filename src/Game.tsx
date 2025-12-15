@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { calcBlockMovement, quickDrop, type BlockDef } from "./blockControl"
 import { generateUpNext } from "./generateUpNext"
 import { canFall } from "./canFall"
-import { defaultGridArr, Shape, shapeChart } from "./constants"
+import { defaultGridArr, resetUI, Shape, shapeChart } from "./constants"
 import { outerOffsets } from "./outerOffsets"
 import { UpNextCanvas } from "./UpNextCanvas"
 import { useLineClearContext, usePauseContext } from "./context"
@@ -158,6 +158,25 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
         }
     }, [blockData]);
 
+    useEffect(() => { //separate from other shop events to avoid effect being interrupted
+        let timeoutId = -1;
+
+        const shopSlowmo = () => {
+            setFallInterval((prevInterval) => ({...prevInterval, interval: 2000}));
+
+            timeoutId = setTimeout(() => {setFallInterval((prevInterval) => ({...prevInterval, interval: 1000}))}, 1000);
+        }
+
+        document.addEventListener('shopSlowmoEvent', shopSlowmo);
+
+        return () => {
+            document.removeEventListener('shopSlowmoEvent', shopSlowmo);
+            if(timeoutId !== -1) {
+                clearTimeout(timeoutId);
+            }
+        }
+    });
+    
     useEffect(() => {
         const shopClear = () => {
             const newGrid = structuredClone(gridArr);
@@ -179,7 +198,6 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
 
         document.addEventListener('shopClearEvent', shopClear);
         document.addEventListener('shopIEvent', shopI);
-
 
         return () => {
             document.removeEventListener('shopClearEvent', shopClear);
@@ -260,6 +278,7 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
         setUpNext(generateUpNext());
         setFallInterval(defaultInterval);
         setGameOver(false);
+        document.dispatchEvent(resetUI);
         lineClearBus.publish(-1);
     }
 

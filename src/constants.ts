@@ -187,9 +187,17 @@ export const srs_chart: Record<RotateableShapes, number[][][][]> = {
         ]],
 };
 
+export const resetUI = new CustomEvent('resetUI', {
+    bubbles: true,
+    composed: true
+});
+
+//shop stuff
+
 export const shopContents = [
     {name: "Clear Line", effect: "Clears the bottom line from the board", cost: 3000, timesBought: 0},
-    {name: "I-ify", effect: "Transforms next block into an I block", cost: 7500, timesBought: 0}
+    {name: "I-ify", effect: "Transforms next block into an I block", cost: 7500, timesBought: 0},
+    {name: "Slowmo", effect: "Slows down the block drop rate for 10s", cost: 5000, timesBought: 0}
 ]
 
 export const shopLineClearEvent = new CustomEvent('shopClearEvent', {
@@ -199,5 +207,10 @@ export const shopLineClearEvent = new CustomEvent('shopClearEvent', {
 
 export const shopIEvent = new CustomEvent('shopIEvent', {
     bubbles: true,
-    composed: true //research more
+    composed: true
+});
+
+export const shopSlowmoEvent = new CustomEvent('shopSlowmoEvent', {
+    bubbles: true,
+    composed: true
 });

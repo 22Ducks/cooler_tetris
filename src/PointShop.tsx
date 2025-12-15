@@ -1,7 +1,7 @@
 import styled from "styled-components"
-import { shopContents, shopIEvent, shopLineClearEvent } from "./constants"
+import { shopContents, shopIEvent, shopLineClearEvent, shopSlowmoEvent } from "./constants"
 import { Button } from "@mui/material"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 type ShopProps = {
     score: number,
@@ -35,7 +35,7 @@ margin-top: 5%;
 `
 
 export const PointShop = ({score, setScore}: ShopProps) => {
-
+    
     const [shopCostMods, setShopCostMods] = useState(
         shopContents.reduce((acc, curr) => {
             acc = {
@@ -47,9 +47,31 @@ export const PointShop = ({score, setScore}: ShopProps) => {
         }, {})
     );
 
+    useEffect(() => {
+        const resetCostMods = () => {
+            setShopCostMods(
+                shopContents.reduce((acc, curr) => {
+                    acc = {
+                        ...acc,
+                        [curr.name]: 1
+                    }
+
+                    return acc;
+                }, {})
+            );
+        }
+
+        document.addEventListener('resetUI', resetCostMods);
+
+        return () => {
+            document.removeEventListener('resetUI', resetCostMods);
+        }
+    }, []);
+
     const shopEventChart = {
         "Clear Line": shopLineClearEvent,
-        "I-ify": shopIEvent
+        "I-ify": shopIEvent,
+        "Slowmo": shopSlowmoEvent
     }
 
     const itemBought = (item: string, cost: number, ) => {
@@ -62,7 +84,7 @@ export const PointShop = ({score, setScore}: ShopProps) => {
 
             return newMod;
         });
-        document.dispatchEvent(shopEventChart[item as keyof typeof shopEventChart]); //event not dispatching?
+        document.dispatchEvent(shopEventChart[item as keyof typeof shopEventChart]);
         setScore(score - cost);
     }
 
