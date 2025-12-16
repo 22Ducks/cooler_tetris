@@ -195,9 +195,10 @@ export const resetUI = new CustomEvent('resetUI', {
 //shop stuff
 
 export const shopContents = [
-    {name: "Clear Line", effect: "Clears the bottom line from the board", cost: 3000, timesBought: 0},
-    {name: "I-ify", effect: "Transforms next block into an I block", cost: 7500, timesBought: 0},
-    {name: "Slowmo", effect: "Slows down the block drop rate for 10s", cost: 5000, timesBought: 0}
+    {name: "Clear Line", effect: "Clears the bottom line from the board", cost: 5000},
+    {name: "I-ify", effect: "Transforms next block into an I block", cost: 7500},
+    {name: "Slowmo", effect: "Slows down the block drop rate for 10s", cost: 3000},
+    {name: "Skip Block", effect: "Skip to the next block", cost: 3000}
 ]
 
 export const shopLineClearEvent = new CustomEvent('shopClearEvent', {
@@ -211,6 +212,11 @@ export const shopIEvent = new CustomEvent('shopIEvent', {
 });
 
 export const shopSlowmoEvent = new CustomEvent('shopSlowmoEvent', {
+    bubbles: true,
+    composed: true
+});
+
+export const shopSkipEvent = new CustomEvent('shopSkipEvent', {
     bubbles: true,
     composed: true
 });

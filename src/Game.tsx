@@ -196,14 +196,23 @@ export const Game = ({gameDimensions, windowDimensions}: GameProps) => {
             });
         }
 
+        const shopSkip = () => {
+            setBlockData(upNext);
+
+            const newNext = generateUpNext();
+            setUpNext(newNext);
+        }
+
         document.addEventListener('shopClearEvent', shopClear);
         document.addEventListener('shopIEvent', shopI);
+        document.addEventListener('shopSkipEvent', shopSkip);
 
         return () => {
             document.removeEventListener('shopClearEvent', shopClear);
             document.removeEventListener('shopIEvent', shopI);
+            document.removeEventListener('shopSkipEvent', shopSkip);
         }
-    }, [gridArr]);
+    }, [gridArr, upNext]);
     
     useEffect(() => {    
         if(paused) {

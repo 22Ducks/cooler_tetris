@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { shopContents, shopIEvent, shopLineClearEvent, shopSlowmoEvent } from "./constants"
+import { shopContents, shopIEvent, shopLineClearEvent, shopSkipEvent, shopSlowmoEvent } from "./constants"
 import { Button } from "@mui/material"
 import { useEffect, useState } from "react"
 
@@ -71,11 +71,11 @@ export const PointShop = ({score, setScore}: ShopProps) => {
     const shopEventChart = {
         "Clear Line": shopLineClearEvent,
         "I-ify": shopIEvent,
-        "Slowmo": shopSlowmoEvent
+        "Slowmo": shopSlowmoEvent,
+        "Skip Block": shopSkipEvent
     }
 
     const itemBought = (item: string, cost: number, ) => {
-        console.log("bought successfully");
         setShopCostMods((currentMods) => {
             const newMod = {
                 ...currentMods,
